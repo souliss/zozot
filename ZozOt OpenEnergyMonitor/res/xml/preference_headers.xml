@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  <PreferenceCategory android:title="Impostazioni Open Energy Monitor">
+      
+   <EditTextPreference android:title="@string/APIKey_title"
+			android:dialogTitle="@string/APIKey_title"
+			android:dialogMessage="@string/APIKey_desc" android:key="@string/APIKey"/>
+       
+  </PreferenceCategory>
+
+ <PreferenceCategory android:title="Impostazioni Souliss">
+           
+   <EditTextPreference android:dialogTitle="@string/UrlZozzariello_title" 
+		android:defaultValue="http://127.0.0.1:8080/structure?all" android:dialogMessage="@string/UrlZozzariello_desc" android:key="@string/UrlZozzariello" android:title="@string/UrlZozzariello_title"/>
+  
+
+   </PreferenceCategory>
+ <PreferenceCategory android:title="Servizio invio dati">
+          
+   <ListPreference
+            android:defaultValue="10000"
+            android:entries="@array/scheduleInterval"
+            android:entryValues="@array/scheduleIntervalValues"
+            android:key="@string/scheduleInterval"
+            android:summary=""
+            android:title="Tempo" />
+     
+ </PreferenceCategory>
+ 
+  
+</PreferenceScreen>

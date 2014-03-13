@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="scheduleInterval">
+      <item name="3000">3 seconds</item>
+        <item name="5000">5 seconds</item>
+        <item name="10000">10 seconds</item>
+        <item name="30000">30 seconds</item>
+        <item name="60000">1 minute</item>
+        <item name="120000">2 minutes</item>
+        <item name="300000">5 minutes</item>
+        <item name="600000">10 minutes</item>
+        <item name="1200000">20 minutes</item>
+        <item name="1800000">half hour</item>
+        <item name="3600000">hour</item>
+        <item name="21600000">6 hour</item>
+        <item name="86400000">day</item>
+    </string-array>   
+      <string-array name="scheduleIntervalValues">
+      <item name="3000">3000</item>
+        <item name="5000">5000</item>
+        <item name="10000">10000</item>
+        <item name="30000">30000</item>
+        <item name="60000">60000</item>
+        <item name="120000">120000</item>
+        <item name="300000">300000</item>
+        <item name="600000">600000</item>
+        <item name="1200000">1200000</item>
+        <item name="1800000">1800000</item>
+        <item name="3600000">3600000</item>
+        <item name="21600000">21600000</item>
+        <item name="86400000">86400000</item>
+    </string-array> 
+</resources>
