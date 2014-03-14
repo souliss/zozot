@@ -144,7 +144,7 @@ public class ZozOtService extends Service {
 	notificationBuilder.setWhen(System.currentTimeMillis());
 
 	// Icona della notifica
-	notificationBuilder.setSmallIcon(R.drawable.xively_launcher);
+	notificationBuilder.setSmallIcon(R.drawable.oem_launcher);
 
 	// Creiamo il pending intent che verrà lanciato quando la notifica
 	// viene premuta
