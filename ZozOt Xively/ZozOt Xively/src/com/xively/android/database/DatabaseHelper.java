@@ -14,7 +14,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	
-	private static final String DATABASE_NAME = "ZozOt.db";
+	private static final String DATABASE_NAME = "ZozOtXively.db";
 	private static final int SCHEMA_VERSION = 1;
 		
 	public DatabaseHelper(Context context)

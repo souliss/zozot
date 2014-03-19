@@ -182,7 +182,7 @@ public class ZozOtActivity extends Activity {
 					 String sURL= opzioni.getMyUrl();
 					 //INVIA LA RICHIESTA A SOULISS E RACCOGLIE LA RISPOSTA
 					 String s = null;
-					 if (sURL!=null && sURL.isEmpty()){
+					 if (sURL!=null && !sURL.isEmpty()){
 						 s = SoulissDevicesHelper.getUrlResponse(sURL);
 					 }
 					// parse JSON data
