@@ -293,6 +293,7 @@ public class SoulissDevicesHelper extends Thread {
 						//se il push è andato a buon fine allora elimino gli elementi presenti nella lista temporanea
 						//INVIO NOTIFICA ALL'ACTIVITY PRINCIPALE
 						notifyMessage(formatter.format(date.getTime()) + " inseriti " + r.getElementiCaricati() + " datapoints");
+						//QUI VERIFICARE SE FARE IL CLEAR DEGLI ELEMENTI CARICATI OPPURE DI iNumeroElementiDaCaricare 
 						jsonBuilder.clear(iNumeroElementiDaCaricare);
 						Log.d(TAG, this.getClass().getName() + " Push OK, cancellazione elementi dalla lista: " + r.getElementiCaricati() );
 						//se l'array è vuoto allora la volta successiva posso caricare tutti gli elementi senza i limiti dovuti al timeout. Quindi riporto iNumeroElementiDaCaricare a Null

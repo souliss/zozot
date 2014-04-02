@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.xively.android.cloudservice.exception.ParseResponseException;
 import com.xively.android.cloudservice.exception.RequestUnsuccessfulException;
+import com.xively.android.consumer.Constants;
 
 /**
  * {@link AsyncTask} for making the http request.
@@ -19,7 +20,7 @@ import com.xively.android.cloudservice.exception.RequestUnsuccessfulException;
  */
 public class HttpTask extends AsyncTask<Request, Integer, Response[]>
 {
-	private static final String TAG = HttpTask.class.getSimpleName();
+	private static final String TAG = Constants.TAG_LivelloAvvisiServizio;
 
 	@Override
 	protected Response[] doInBackground(Request... requests)
@@ -57,7 +58,7 @@ public class HttpTask extends AsyncTask<Request, Integer, Response[]>
 
 	private Response makeRequest(Request request)
 	{
-		Log.d(TAG, String.format("request(%s, %s)", request.getUriStr(), request.getBody()));
+		Log.i(TAG, String.format("request(%s, %s)", request.getUriStr(), request.getBody()));
 
 		Response retval = null;
 
@@ -81,7 +82,7 @@ public class HttpTask extends AsyncTask<Request, Integer, Response[]>
 			httpConn.setRequestProperty("X-ApiKey", request.getApiKey());
 			httpConn.setRequestProperty("Content-Type", "application/json");
 
-			Log.d(TAG, String.format("httpMethod(%s)", request.getHttpMethod()));
+			Log.i(TAG, String.format("httpMethod(%s)", request.getHttpMethod()));
 			if (request.getHttpMethod().equals(Request.HTTP_METHOD_PUT) || request.getHttpMethod().equals(Request.HTTP_METHOD_POST) ) {
 				httpConn.setDoOutput(true);
 				httpConn.setFixedLengthStreamingMode(request.getBody().length());
@@ -91,7 +92,7 @@ public class HttpTask extends AsyncTask<Request, Integer, Response[]>
 		        writer.close();
 			}
 
-			Log.d(TAG, String.format("Response on request: %s", httpConn.getResponseMessage()));
+			Log.i(TAG, String.format("Response on request: %s", httpConn.getResponseMessage()));
 			String content = ResponseHelper.read(httpConn.getInputStream());
 			retval = new Response(httpConn.getResponseCode(), httpConn.getResponseMessage(), content);
 		} catch (IOException e)
