@@ -1,16 +1,7 @@
 package com.zozot.OEM.consumer;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-
-import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -27,9 +18,14 @@ public class PreferenceHelper implements Serializable {
 	private String myUrl;
 	SharedPreferences.Editor editor;
 	private String myInterval="0";
+	private String myIntervalForPowerTypical="0";
+	
+	
 	private boolean bPushServiceState=false;
 
 	public boolean isConfigured=false;
+
+	private int[] powerTypicalsArray;
 	
 	
 
@@ -59,7 +55,8 @@ public class PreferenceHelper implements Serializable {
 		} catch (Exception e) {
 					}
 		try {
-		setMyInterval(prefs.getString("scheduleInterval", "0"));	
+		setMyInterval(prefs.getString("scheduleInterval", "0"));
+		setMyIntervalForPowerTypical(prefs.getString("scheduleIntervalPowerRetrieving", "0"));
 		} catch (Exception e) {
 			
 		}
@@ -127,8 +124,6 @@ public class PreferenceHelper implements Serializable {
 			} catch (NumberFormatException e) {
 				return 0;
 			}
-		
-		
 	}
 
 
@@ -148,19 +143,6 @@ private void isConfiguredCheck() {
 		 isConfigured=false;
 		
 	}
-
-
-//	public String getMyDatastreamName() {
-//		return myDatastreamName;
-//	}
-//
-//
-//	public void setMyDatastreamName(String myDatastreamName) {
-//		this.myDatastreamName = myDatastreamName;
-//		editor.putString("myDatastreamName", myDatastreamName);
-//		editor.commit();
-//	}
-	
 	
 	public void reload() {
 		//SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(contx);
@@ -178,24 +160,34 @@ private void isConfiguredCheck() {
 		editor.commit();
 	}
 	
-	public void setMyInterval(String sInterval){
-		
-		//	this.myInterval=Long.parseLong(sInterval);
-			this.myInterval=sInterval;
-			editor.putString("scheduleInterval", this.myInterval);
-		editor.commit();	
-		
-	}
 	public long getMyInterval(){
 		try {
 			return Long.parseLong(myInterval);	
 			} catch (NumberFormatException e) {
 				return 0;
 			}
-		
+}
 
-		}
+	public void setMyInterval(String sInterval){
+			this.myInterval=sInterval;
+			editor.putString("scheduleInterval", this.myInterval);
+		editor.commit();	
+	}
 
+
+	public long getMyIntervalForPowerTypical() {
+		try {
+			return Long.parseLong(myIntervalForPowerTypical);	
+			} catch (NumberFormatException e) {
+				return 0;
+			}
+}
+
+	public void setMyIntervalForPowerTypical(String myIntervalForPowerTypical) {
+		this.myIntervalForPowerTypical=myIntervalForPowerTypical;
+		editor.putString("scheduleIntervalPowerRetrieving", this.myIntervalForPowerTypical);
+		editor.commit();
+	}
 
 	public boolean getMyServiceState() {
 		// TODO Auto-generated method stub
@@ -205,8 +197,18 @@ private void isConfiguredCheck() {
 	public void setMyServiceState(boolean bPushServiceState) {
 		this.bPushServiceState=bPushServiceState;
 		editor.putBoolean("pushState", this.bPushServiceState);
-	editor.commit();
+		editor.commit();
+	}
+
+
+	public void setPowerTypicalsArray(int[] powerTypicalsArray2) {
+		this.powerTypicalsArray= powerTypicalsArray2;
 		
+	}
+
+
+	public int[] getPowerTypicalsArray() {
+		return powerTypicalsArray;
 	}
 	
 }

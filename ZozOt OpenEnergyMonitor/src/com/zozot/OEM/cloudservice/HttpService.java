@@ -1,14 +1,12 @@
 package com.zozot.OEM.cloudservice;
 
-import java.net.MalformedURLException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import android.app.Service;
 import android.content.Intent;
-import android.net.Uri;
-import android.net.Uri.Builder;
+
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -70,22 +68,15 @@ public class HttpService extends Service
 			@Override
 			public Response getFeed() throws RemoteException
 			{
-				return get(new UriBuilder().feeds().resource()+new UriBuilder().apiKeys().resource(apiKey), apiKey);
+				return get(new UriBuilder().feeds().resource()+new UriBuilder().apiKeys().resource(apiKey));
 			}
 
 			@Override
-			public Response createDatapoint(String datastreamId, String sValue) throws RemoteException
+			public Response createDatastream(String sUrlBodyString) throws RemoteException
 			{
-				String sUri=new UriBuilder().datapoints(datastreamId, sValue).resources(apiKey);
+				String sUri=new UriBuilder().datapoints(sUrlBodyString).resources(apiKey);
 				//sUri="http://emoncms.org/input/post.json?json=%7B" + datastreamId + ":" + sValue + "%7D&apikey=" + apiKey;
-				
-				
-//				 Builder b=new Uri.Builder();
-//		 		 Uri u=b.build();
-//		 		String t=u.encode(sUri);
-		 		return get( sUri, "",apiKey);
-				
-					
+				return get( sUri);
 			}
 		};
 	}
@@ -96,9 +87,9 @@ public class HttpService extends Service
 	 * @param uri
 	 * @return response from the request made.
 	 */
-	private Response get(String uri, String apiKey)
+	private Response get(String uri)
 	{
-		Request request = new Request(Request.HTTP_METHOD_GET, uri, apiKey, null);
+		Request request = new Request(Request.HTTP_METHOD_GET, uri, null, null);
 		return executeRequest(request);
 	}
 
@@ -116,21 +107,7 @@ public class HttpService extends Service
 		return executeRequest(request);
 	}
 
-	/**
-	 * Helper method to make http put request with given params.
-	 * 
-	 * @param uri
-	 * @param body
-	 * @param apiKey
-	 * @return response from the request made.
-	 */
-	private Response get(String uri, String body, String apiKey)
-	{
-		Request request = new Request(Request.HTTP_METHOD_GET, uri, body, apiKey);
-		return executeRequest(request);
-	}
-
-	/**
+		/**
 	 * Helper method to make http delete request with given params.
 	 * 
 	 * @param uri

@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <string name="app_name">ZozOt - Open Energy Monitory</string>
+    <string name="app_name">ZozOt - Open Energy Monitor</string>
+    <string name="service_name">ZozOtService</string>
     <string name="btnConferma_text">Conferma</string>
-    <string name="btnForcePush_text">Force Push (non attivo)</string>
     <string name="APIKey">APIKey</string>
     <string name="APIKey_title">API Key</string>
     <string name="APIKey_desc">Inserire la chiave privata</string>
-    <string name="FeedId_title">Feed Id</string>
-    <string name="FeedId">FeedId</string>
-    <string name="FeedId_desc">Inserire il numero del canale</string>
     <string name="UrlZozzariello">UrlZozzariello</string>
     <string name="UrlZozzariello_title">Indirizzo</string>    
     <string name="UrlZozzariello_desc">URL di Zozzariello, locale o remoto </string>    
@@ -17,6 +14,10 @@
     <string name="toggleOFFText">OFF</string>
     <string name="opzioni_desc">Setting</string>
     <string name="scheduleInterval">scheduleInterval</string>
+    <string name="scheduleIntervalPowerRetrieving">scheduleIntervalPowerRetrieving</string>
+    <string name="scheduleInterval_title">Intervallo Invio Dati</string>
+    <string name="scheduleIntervalPowerRetrieving_title">Intervallo Rilevamento Consumi</string>
+    
     <string name="pushState">pushState</string>
     <string name="GetNodesAndStream_desc">Get nodes and stream</string>
     <string name="GetNodesAndStream_key">GetNodesAndStream_key</string>

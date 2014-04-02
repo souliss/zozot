@@ -14,11 +14,11 @@
         android:allowBackup="true"
         android:icon="@drawable/oem_launcher"
         android:label="@string/app_name">
-          
+  
             
           
         <activity
-             android:name=".ZozOtActivity" 
+             android:name="com.zozot.OEM.consumer.ZozOtActivity" 
             android:label="@string/app_name">
             
             <intent-filter>
@@ -28,9 +28,9 @@
             </intent-filter>
         </activity>
         
-     <activity android:name=".PreferencesActivity" android:label="@string/app_name" />
+     <activity android:name="com.zozot.OEM.consumer.PreferencesActivity" android:label="@string/app_name" />
         
-     <activity android:name=".AssociationsActivity" android:label="@string/app_name" />
+     <activity android:name="com.zozot.OEM.consumer.AssociationsActivity" android:label="@string/app_name" />
      
     <service android:name="com.zozot.OEM.cloudservice.HttpService" >
             <intent-filter>
@@ -38,9 +38,9 @@
             </intent-filter>
         </service>  
 
-    <service android:name="com.zozot.OEM.service.ZozOtService" >
+    <service android:name="com.zozot.OEM.ZozOtService.ZozOtService" >
              <intent-filter>
-                <action android:name="com.zozot.OEM.service.ZozOtService" />
+                <action android:name="com.zozot.OEM.ZozOtService.ZozOtService" />
             </intent-filter>
          </service> 
     </application>

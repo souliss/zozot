@@ -1,15 +1,25 @@
 package com.zozot.OEM.consumer;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.zozot.OEM.ZozOtService.ZozOtService;
+import com.zozot.OEM.consumer.AssociationsActivity;
+import com.zozot.OEM.consumer.Constants;
+import com.zozot.OEM.consumer.Device;
+import com.zozot.OEM.consumer.MyApplication;
+import com.zozot.OEM.consumer.PreferenceHelper;
+import com.zozot.OEM.consumer.PreferencesActivity;
+import com.zozot.OEM.consumer.SoulissDevicesHelper;
+import com.zozot.OEM.consumer.ZozOtActivity;
+import com.zozot.OEM.consumer.ZozOtActivity.HttpServiceConnection;
 import com.zozot.OEM.cloudservice.Response;
-import com.zozot.OEM.consumer.R;
-import com.zozot.OEM.database.DatabaseHelper;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -21,6 +31,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -33,16 +44,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.zozot.OEM.cloudservice.IHttpService;
-import com.zozot.OEM.service.ZozOtService;
+import com.zozot.OEM.consumer.R;
+import com.zozot.OEM.database.DatabaseHelper;
 
-/**
- * A primitive activity to demo simple remote client connection to the Xively's
+/* A primitive activity to demo simple remote client connection to the Xively's
  * AIDL Service service.
  * 
  * @author s0pau
@@ -53,24 +64,21 @@ import com.zozot.OEM.service.ZozOtService;
  *
  */
 public class ZozOtActivity extends Activity {
-	public static final String TAG = ZozOtActivity.class.getSimpleName();
-	IHttpService cloudService;
-	//HttpServiceConnection connection;
+	private static final String TAG =  Constants.TAG_LivelloAvvisiApplicazione;
+	IHttpService OEMService;
 	private static volatile Context context;
 	private static PreferenceHelper opzioni;
 	final DatabaseHelper dbHelper=new DatabaseHelper(this);
 	final String contentType = "text/html; charset=UTF-8";
-	 int iNrFails=Constants.CONNECTION_RETRY_NUMBERS;
+	int iNrFails=Constants.CONNECTION_RETRY_NUMBERS;
 		TextView resultField;
 	ArrayList<Device> aSoulissDevices= new ArrayList<Device>();
-	ArrayList<String> aFeeds=new ArrayList<String>();;
-		
+	ArrayList<String> aOEMFeeds=new ArrayList<String>();
 	// ------------------------------------------------------------------
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
-		
+	
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.zozotactivity);
@@ -79,19 +87,21 @@ public class ZozOtActivity extends Activity {
 		setOpzioni(new PreferenceHelper(context));
 		 opzioni=getOpzioni();
 
-			//impostazioni della texview per il log		 
+		//impostazioni della texview per il log		 
 		 resultField = (TextView) findViewById(R.id.result);
 		//	resultField.setMaxLines(80); 
 		 resultField.setMovementMethod(new ScrollingMovementMethod());
+		 resultField.setText(MyApplication.getInstance().getTextBoxLog());
 		 
-		 //inizializzazione servizio per la connessione alla rete ed a xively
+		 //inizializzazione servizio per la connessione alla rete ed a emonCMS
 		 initService();
 	//LETTURA DATABASE
-	aFeeds=dbHelper.readDBStreams(dbHelper.getReadableDatabase(),aFeeds);
+	aOEMFeeds=dbHelper.readDBStreams(dbHelper.getReadableDatabase(),aOEMFeeds);
 	aSoulissDevices=dbHelper.readDBSoulissDevices(dbHelper.getReadableDatabase(), aSoulissDevices);
 	
 	//registo il receiver che si occupa di recuperare i messaggi broadcast del service (aggiornamenti da visualizzare sull'activity principale)
 	registerReceiver(uiUpdated, new IntentFilter(Constants.PUSH_RESULT_UPDATE_INTENT_ACTION_NAME));
+	registerReceiver(uiUpdatedPowerTypicals, new IntentFilter(Constants.PUSH_POWER_TYPICALS_RESULT_UPDATE_INTENT_ACTION_NAME));
 	
 	
 		// Setup the UI
@@ -124,30 +134,12 @@ public class ZozOtActivity extends Activity {
 			    		 ((ToggleButton) v).setChecked(false);
 			    	}
 			    } else {
-			    	TimerStop();
-			    	
+			    	//TimerStop();
+			    	doUnbindService();
 			    }
 				}	
 		});
-		
-
-		Button button2 = (Button) findViewById(R.id.doForcePush);
-		button2.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-								
-				// *****************
-				// *****************
-				// RICHIESTA DATI ZOZZARIELLO E INVIO A XIVELY
-//				Handler handler = new MyHandler();
-//				SoulissDevicesHelper thr = new SoulissDevicesHelper(handler,opzioni, aSoulissDevices, service, Constants.PUSH_TO_XIVELY);
-//				thr.start();
-				
-				
-				}
-		});
-
-		
+						
 	}
 
 	// GESTIONE CLICK MENU
@@ -163,7 +155,7 @@ public class ZozOtActivity extends Activity {
 				Intent myIntents2 = new Intent(this, AssociationsActivity.class);
 				String pkg=getPackageName();
 				myIntents2.putParcelableArrayListExtra(pkg+"SoulissDevices", aSoulissDevices);
-				myIntents2.putStringArrayListExtra(pkg+"XivelyFeeds", aFeeds);
+				myIntents2.putStringArrayListExtra(pkg+"XivelyFeeds", aOEMFeeds);
 				startActivityForResult(myIntents2, Constants.ASSOCIATIONS_ACTIVITY);
 				}else{
 					 Toast.makeText(ZozOtActivity.this, "Configurare...", Toast.LENGTH_SHORT).show();
@@ -173,7 +165,7 @@ public class ZozOtActivity extends Activity {
 				
 			} else if (id == R.id.GetNodesAndStream) {
 				
-				//avvia un thread per riempire gli array con i feeds di Xively ed i devides di Souliss solo quando il servizio di connessione di xively è partito
+				//avvia un thread per riempire gli array con i feeds di OEM ed i devides di Souliss solo quando il servizio di connessione di OEM è partito
 	if(opzioni.isConfigured){
 				final Handler handler = new Handler();
 				new Thread(new Runnable() {
@@ -185,19 +177,21 @@ public class ZozOtActivity extends Activity {
 						//thread sempre in esecuzione. Controlla che i due array aXivelyFeeds e aSoulissDevices siano sempre pieni.
 						boolean isOK=false;	
 						while (!isOK && iNrFails>0){
-				//		if (service!=null && (aXivelyFeeds==null || aSoulissDevices==null || aXivelyFeeds.size()==0 || aSoulissDevices.size()==0)) {
-							if (cloudService==null){
+							if (OEMService==null){
 								//pongo la variabile a zero per uscire dal ciclo while
 								iNrFails=0;
 							}else{
-							aFeeds= getFeeds(dbHelper);	
+							aOEMFeeds= getFeeds(dbHelper);	
 						
 							//prima di tutto cancello in contenuto della tabella soulisDevices sul DB
 							dbHelper.deleteSoulissDevices(dbHelper.getWritableDatabase());
 	
 					 String sURL= opzioni.getMyUrl();
-					 //INVIA LA RICHIESTA A SOULISS E RACCOGLIE LA RISPOSTA 
-					String s = SoulissDevicesHelper.getUrlResponse(sURL);
+					 //INVIA LA RICHIESTA A SOULISS E RACCOGLIE LA RISPOSTA
+					 String s = null;
+					 if (sURL!=null && !sURL.isEmpty()){
+						 s = SoulissDevicesHelper.getUrlResponse(sURL);
+					 }
 					// parse JSON data
 					try {
 						JSONArray jArray = new JSONArray(s);
@@ -214,10 +208,11 @@ public class ZozOtActivity extends Activity {
 								 //i è il nodo
 								 //j è lo slot
 								 String sNomeNodo=SoulissDevicesHelper.getSensorItemName(jArray, i, j);
-								 aSoulissDevices.add(new Device(i,j, sNomeNodo));
-								 dbHelper.insertSoulissDevice(dbHelper.getWritableDatabase(), sNomeNodo, String.valueOf(i),String.valueOf(j), null, false);
+								 int iTypical=SoulissDevicesHelper.getTypical(jArray, i, j);
+								 aSoulissDevices.add(new Device(i,j, iTypical, sNomeNodo));
+								 dbHelper.insertSoulissDevice(dbHelper.getWritableDatabase(), sNomeNodo, String.valueOf(i),String.valueOf(j), String.valueOf(iTypical), null, false);
 							 }
-							 if(aSoulissDevices != null && aSoulissDevices.size()>0 && aFeeds != null && aFeeds.size()>0) {
+							 if(aSoulissDevices != null && aSoulissDevices.size()>0 && aOEMFeeds != null && aOEMFeeds.size()>0) {
 								 isOK=true;
 							 }
 						}
@@ -237,12 +232,12 @@ public class ZozOtActivity extends Activity {
 							int iNodi = 0,iStreams = 0;
 		                public void run() {
 		                		
-					if (aFeeds != null && aFeeds.size()>0) {
-						 Toast.makeText(ZozOtActivity.this, "Get Feeds OK", Toast.LENGTH_SHORT).show();
-						 iStreams=aFeeds.size();
+					if (aOEMFeeds != null && aOEMFeeds.size()>0) {
+						 Toast.makeText(ZozOtActivity.this, "Get OEM Feeds OK", Toast.LENGTH_SHORT).show();
+						 iStreams=aOEMFeeds.size();
 					}
 					else {  
-						Toast.makeText(ZozOtActivity.this, "Get Feeds ERROR", Toast.LENGTH_SHORT).show();
+						Toast.makeText(ZozOtActivity.this, "Get OEM Feeds ERROR", Toast.LENGTH_SHORT).show();
 						iNrFails--;
 					}
 								
@@ -258,7 +253,7 @@ public class ZozOtActivity extends Activity {
 					 if (iNodi >0 && iStreams>0) Toast.makeText(ZozOtActivity.this, "Trovati " + iNodi +" dispositivi e " + iStreams + " canali", Toast.LENGTH_SHORT).show(); 
 		               
 					 //se la lettura degli stream e dei devices è andata a buon fine allora ripristino il contatore RETRY
-					 if(aSoulissDevices != null && aSoulissDevices.size()>0 && aFeeds != null && aFeeds.size()>0) {
+					 if(aSoulissDevices != null && aSoulissDevices.size()>0 && aOEMFeeds != null && aOEMFeeds.size()>0) {
 						 iNrFails=Constants.CONNECTION_RETRY_NUMBERS;
 						
 					 }
@@ -283,38 +278,38 @@ public class ZozOtActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
-//		releaseService();
-	}
-
-	/**
-	 * Binds this activity to the service.
-	 */
-//	public void initService() {
-//		
-//		connection = new HttpServiceConnection();
-//		
-//		Intent i = new Intent("com.xively.android.service.HttpService");
-//		
-//		boolean ret = bindService(i, connection, Context.BIND_AUTO_CREATE);
-//		
-//		Log.d(TAG, "initService() bound with " + ret);
-//	}
-
-//	/**
-//	 * Unbinds this activity from the service.
-//	 */
-//	private void releaseService() {
-//		unbindService(connection);
-//		connection = null;
-//		Log.d(TAG, "releaseService() unbound.");
-//	}
-
+		
+	//		doUnbindService();
+		
+			// Muovo i log su file
+			Log.w(TAG, "Closing app, moving logs");
+			try {
+				File filename = new File(Environment.getExternalStorageDirectory() + "/zozot-oem.log");
+				filename.createNewFile();
+				
+				// String cmd = "logcat -d -v time  -f " +
+				// filename.getAbsolutePath()
+								
+				String cmd = "logcat -d -v time  -f " + filename.getAbsolutePath() + " " + Constants.TAG_LivelloAvvisiApplicazione + ":D " + Constants.TAG_LivelloAvvisiServizio+ ":D *:S ";
+				Runtime.getRuntime().exec(cmd);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			super.onDestroy();
+		}
+	
 	public static Context getAppContext() {
 		return ZozOtActivity.context;
 	}
 
 	private void setOpzioni(PreferenceHelper opzioni) {
+		// Create an ArrayAdapter that will contain all list items
+	    ArrayAdapter<String> adapter;
+
+	    int[] powerTypicalsArray = getResources().getIntArray(R.array.powerTypicals);    
+
+opzioni.setPowerTypicalsArray(powerTypicalsArray);
+
 		this.opzioni = opzioni;
 	}
 
@@ -389,15 +384,15 @@ public class ZozOtActivity extends Activity {
 		stopService(new Intent(ZozOtActivity.this,ZozOtService.class));
 		Toast.makeText(ZozOtActivity.this, "Push STOP", Toast.LENGTH_SHORT).show();
 		opzioni.setMyServiceState(false);
+		//doUnbindService();
 	}
 	
 
 	Intent myIntents2;
 	private Intent TimerStart(){
 		//avvia il servizio
-		//Parameters_Xively param =new Parameters_Xively(opzioni.getMyApiKey(), opzioni.getMyFeedId(), opzioni.getMyUrl(), opzioni.getMyInterval());
-		
-		
+				
+		initService();
 		myIntents2 = new Intent(getApplicationContext(), ZozOtService.class);
 		String pkg=getPackageName();
 		myIntents2.putParcelableArrayListExtra(pkg+"SoulissDevices", aSoulissDevices);
@@ -487,35 +482,56 @@ public class ZozOtActivity extends Activity {
 	    	if (sValue!=null){
 	    		    	
 			resultField.append("\n"+sValue);
+			//il codice sotto è stato spostato nella classe ZozOtService, nel punto in cui vengono trasmessi i dati in broadcast. Questo è per registrare i messaggi anche quanto l'acgtivity principale non è in esecuzione
+//			//salvo il valore per l'eventuale ripristino in caso di rotazione dello schermo
+//			MyApplication.getInstance().setTextBoxLog(resultField.getText().toString());
 	    	}
 	    	
 	    	lValue=intent.getExtras().getLong(Constants.COUNTDOWN_KEY);
 	    	//if (lValue>0){
 			TextView countdownField = (TextView) findViewById(R.id.textViewProssimoPush);
-			countdownField.setText(lValue +" seconds remains");
+			countdownField.setText("Push: " + lValue +" seconds");
 	    //	}
 			
 	    }
 	};
 	HttpServiceConnection connection;
+	//riceve i messaggi inviati in broadcast dal service
+	//in alto, nel metodo onCreate, il receiver è registrato ed è aplicato il filtro: registerReceiver(uiUpdated, new IntentFilter(Constants.PUSH_RESULT_UPDATE_INTENT_ACTION_NAME));
+		
+		private BroadcastReceiver uiUpdatedPowerTypicals= new BroadcastReceiver() {
+			
+			String sValue=null;
+			long lValue;
+		    @Override
+		    public void onReceive(Context context, Intent intent) {
+		    	
+		    	lValue=intent.getExtras().getLong(Constants.COUNTDOWN_KEY);
+		    	//if (lValue>0){
+				TextView countdownField = (TextView) findViewById(R.id.textViewProssimoPushPowerTypicals);
+				countdownField.setText("Power: " + lValue +" seconds ");
+		    //	}
+				
+		    }
+		};
 
 	public class HttpServiceConnection implements ServiceConnection {
 					
 	public void onServiceConnected(ComponentName name, IBinder boundService) {
-		cloudService = IHttpService.Stub.asInterface((IBinder) boundService);
+		OEMService = IHttpService.Stub.asInterface((IBinder) boundService);
 		Log.d(ZozOtActivity.TAG, "onServiceConnected() connected");
 		//Toast.makeText(ZozOtActivity.this, "Service connected",Toast.LENGTH_LONG).show();
 	}
 	
 	public void onServiceDisconnected(ComponentName name) {
-		cloudService = null;
+		OEMService = null;
 		Log.d(ZozOtActivity.TAG, "onServiceDisconnected() disconnected");
 		//Toast.makeText(ZozOtActivity.this, "Service connected",Toast.LENGTH_LONG).show();
 	}
 		}
 
 	/**
-		 * getFeeds()
+		 * getXivelyFeeds()
 		 * Restituisce un ArrayList<String> che contiene gli stream di xively disponibili
 		 * @param dbHelper 
 		 * @return ArrayList<String>
@@ -528,15 +544,14 @@ public class ZozOtActivity extends Activity {
 			ArrayList<String> aFeeds = new ArrayList<String>();
 			
 			try {
-				cloudService.setApiKey(opzioni.getMyApiKey());
-				response= cloudService.getFeed();
+				OEMService.setApiKey(opzioni.getMyApiKey());
+				response= OEMService.getFeed();
 				// PARSING RISPOSTA JSON GET FEED
 			if (response.getStatusCode()>-1) {
-				JSONArray jArraySlots = new JSONArray(response.getContent());
-				//JSONObject jObject = new JSONObject(response.getContent());
-
-//			JSONArray jArraySlots=jObject.getJSONArray("datastreams");
-			
+				JSONArray jArraySlots= new JSONArray(response.getContent());
+				
+				//JSONArray jArraySlots=jObject.getJSONArray("datastreams");
+				
 				//LISTA FEED DISPONIBILI
 				String sNomeStream;
 				for (int j = 0; j < jArraySlots.length(); j++) {
@@ -563,10 +578,19 @@ public class ZozOtActivity extends Activity {
 		private boolean isMyServiceRunning() {
 		    ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
 		    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-		        if ("com.zozot.OEM.service.ZozOtService".equals(service.service.getClassName())) {
+		        if ("com.zozot.OEM.ZozOtService.ZozOtService".equals(service.service.getClassName())) {
 		             return true;
 		        }
 		    }
 		    return false;
 		}
+		
+		void doUnbindService() {
+			if (isMyServiceRunning()) {
+				Log.d(TAG, "UNBIND, Detach our existing connection.");
+				TimerStop();
+				unbindService(connection);
+			}
+		}
+		
 }

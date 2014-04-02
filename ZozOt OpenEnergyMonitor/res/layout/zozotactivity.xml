@@ -23,13 +23,6 @@
             android:layout_height="wrap_content"
             android:text="ToggleButton" />
 
-        <Button
-            android:id="@+id/doForcePush"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:text="@string/btnForcePush_text" />
-
     </LinearLayout>
 
     <ScrollView
@@ -63,12 +56,19 @@
         android:gravity="right" >
 
         <TextView
+            android:id="@+id/textViewProssimoPushPowerTypicals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.83"
+            android:text="---"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
             android:id="@+id/textViewProssimoPush"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="---"
             android:textAppearance="?android:attr/textAppearanceSmall" />
-
     </LinearLayout>
 
 </LinearLayout>

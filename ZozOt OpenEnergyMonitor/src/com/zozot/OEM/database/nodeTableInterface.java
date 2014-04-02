@@ -11,7 +11,10 @@ public interface nodeTableInterface extends BaseColumns
 	String DEVICE_NUMBER = "device";
 	String STREAM_NAME= "streamName";
 	String ENABLED="enabled";
+	String TYPICAL_NUMBER = "typical";
  
 	String[] COLUMNS = new String[]
-	{ _ID,NODE_NAME, NODE_NUMBER, DEVICE_NUMBER,STREAM_NAME,ENABLED };
+	{ _ID,NODE_NAME, NODE_NUMBER, DEVICE_NUMBER, TYPICAL_NUMBER ,STREAM_NAME,ENABLED };
+
+	
 }

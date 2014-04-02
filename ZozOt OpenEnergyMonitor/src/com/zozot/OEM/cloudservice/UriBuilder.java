@@ -36,9 +36,9 @@ public class UriBuilder
 		 *            direct parent of the datapoint
 		 * @return url to all Datapoint API endpoints
 		 */
-		public Datapoint datapoints(String datastreamId, String sValue)
+		public Datapoint datapoints(String sUrlBodyString)
 		{
-			return new Datapoint(datastreamId, sValue);
+			return new Datapoint(sUrlBodyString);
 		}
 
 		/**
@@ -100,29 +100,30 @@ public class UriBuilder
 
 		public class Datapoint
 		{
-			public static final String ROOTPush = "post.json&json=";
+			public static final String ROOTPush = "post.json?";
 			//http://emoncms.org/input/post.json?json={power:200}
 			
-			private String datastreamId;
-			private String value;
-
-			private Datapoint(String datastreamId, String sValue)
+//			private String datastreamId;
+//			private String value;
+			private String sUrlBodyString;
+			private Datapoint(String sUrlBodyString)
 			{
 				
-				this.datastreamId = datastreamId;
-				this.value=sValue;
+				this.sUrlBodyString=sUrlBodyString;
 			}
 
 			public String resources(String apiKey)
 			{
-				return parent().concat(ROOTPush).concat(resource(datastreamId, value)).concat(apiKeys().resource(apiKey));
+				//return parent().concat(ROOTPush).concat(resource(sUrlBodyString)).concat(apiKeys().resource(apiKey));
+				return parent().concat(ROOTPush+sUrlBodyString).concat(apiKeys().resource(apiKey));
 			}
 
-			public String resource(String datastreamId, String sValue)
+			public String resource(String sUrlBodyString)
 			{
-				return Uri.encode("{".concat(datastreamId).concat(":").concat(sValue).concat("}"));
+				return Uri.encode(sUrlBodyString);
 			}
 
+						
 			public String parent()
 			{
 				return DEFAULT_BASE_URI;
@@ -148,6 +149,11 @@ public class UriBuilder
 				return ROOT;
 			}
 		}
+		
+		public static String encodeDatastreamAndValue(String datastreamId, String sValue)
+        {
+                return Uri.encode(datastreamId).concat(":").concat(Uri.encode(sValue));
+        }
 
 	}
 

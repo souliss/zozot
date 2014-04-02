@@ -1,6 +1,5 @@
 package com.zozot.OEM.consumer;
 
-import static com.zozot.OEM.consumer.Constants.TAG;
 
 import java.lang.Thread.State;
 import java.util.ArrayList;
@@ -37,10 +36,11 @@ import android.widget.ToggleButton;
 public class AssociationsActivity extends Activity {
 	PreferenceHelper opzioni;
 	ArrayList<Device> aSoulissDevices;
-	ArrayList<String> aXFeeds;
+	ArrayList<String> aXivelyFeeds;
 	ArrayList<ToggleButton> aButtons =new ArrayList<ToggleButton> ();
 	ArrayList<Spinner> aSpinners =new ArrayList<Spinner> (); 
-	    
+	static String TAG=Constants.TAG_LivelloAvvisiApplicazione;    
+	
 	@TargetApi(11)
 	public void onBuildHeaders(List<Header> target) {
 		Log.i(TAG, "AssociationsActivityonBuildHeaders()");
@@ -61,7 +61,7 @@ public class AssociationsActivity extends Activity {
 		Intent intent0= this.getIntent();
 		String pkg=getPackageName();
 		aSoulissDevices=intent0.getParcelableArrayListExtra(pkg+"SoulissDevices");
-		aXFeeds=intent0.getStringArrayListExtra(pkg+"XivelyFeeds");
+		aXivelyFeeds=intent0.getStringArrayListExtra(pkg+"XivelyFeeds");
 		
 		
 	    opzioni = ZozOtActivity.getOpzioni();
@@ -94,15 +94,15 @@ public class AssociationsActivity extends Activity {
 	    	//spinner1.setBackgroundResource(color.background_light);
 	    	
 	    	
-	        String[] listaStreamPerSpinner=new String[aXFeeds.size()+1];
+	        String[] listaStreamPerSpinner=new String[aXivelyFeeds.size()+1];
 	        //la prima voce è la voce nulla
-	        listaStreamPerSpinner[0]=Constants.NULL_STREAM_NAME;
+	        listaStreamPerSpinner[0]=Constants.NULL_XIVELY_STREAM_NAME;
 	        //carica i nomi degli stream disponibili nello spinner
 	        int iSelectedPosition=0;
-	        for (int j=0;j<aXFeeds.size();j++ ){
-	        	listaStreamPerSpinner[j+1]=aXFeeds.get(j);
+	        for (int j=0;j<aXivelyFeeds.size();j++ ){
+	        	listaStreamPerSpinner[j+1]=aXivelyFeeds.get(j);
 
-	        	if (aSoulissDevices.get(i).getStreamName()!=null &&aSoulissDevices.get(i).getStreamName().equals(aXFeeds.get(j))){
+	        	if (aSoulissDevices.get(i).getStreamName()!=null &&aSoulissDevices.get(i).getStreamName().equals(aXivelyFeeds.get(j))){
 	        		iSelectedPosition=j+1;
 	        	}
 	        }
@@ -135,11 +135,11 @@ public class AssociationsActivity extends Activity {
 				dbHelper.deleteSoulissDevices(dbHelper.getWritableDatabase());
 				for (int i=0;i<aSpinners.size();i++){
 					String sStream=aSpinners.get(i).getSelectedItem().toString();
-					if (sStream.equals(Constants.NULL_STREAM_NAME)) sStream=""; 
+					if (sStream.equals(Constants.NULL_XIVELY_STREAM_NAME)) sStream=""; 
 					aSoulissDevices.get(i).setsStream(sStream);
 					aSoulissDevices.get(i).setbEnabled(aButtons.get(i).isChecked());
 					//aggiorna anche il DB
-					 dbHelper.insertSoulissDevice(dbHelper.getWritableDatabase(), aSoulissDevices.get(i).getNomeDispositivo(), String.valueOf(aSoulissDevices.get(i).getIdNodo()), String.valueOf(aSoulissDevices.get(i).getIdDispositivo()), aSoulissDevices.get(i).getStreamName(), aSoulissDevices.get(i).bEnabled);
+					 dbHelper.insertSoulissDevice(dbHelper.getWritableDatabase(), aSoulissDevices.get(i).getNomeDispositivo(), String.valueOf(aSoulissDevices.get(i).getIdNodo()), String.valueOf(aSoulissDevices.get(i).getIdDispositivo()), String.valueOf(aSoulissDevices.get(i).getTypical()), aSoulissDevices.get(i).getStreamName(), aSoulissDevices.get(i).bEnabled);
 				}
 				Intent risposta = new Intent();
 				risposta.putParcelableArrayListExtra(getPackageName(), aSoulissDevices);

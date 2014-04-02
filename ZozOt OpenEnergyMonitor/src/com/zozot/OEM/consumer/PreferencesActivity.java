@@ -1,30 +1,24 @@
 package com.zozot.OEM.consumer;
 
-import static com.zozot.OEM.consumer.Constants.TAG;
 
-import com.zozot.OEM.consumer.R;
+
 import com.zozot.OEM.consumer.PreferenceHelper;
+import com.zozot.OEM.consumer.R;
 
-import java.util.Calendar;
 import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.TextView;
+
 
 
 public class PreferencesActivity extends PreferenceActivity {
 	PreferenceHelper opzioni;
+	static String TAG=Constants.TAG_LivelloAvvisiApplicazione;    
 	
 	Intent myIntent;
 	@TargetApi(11)

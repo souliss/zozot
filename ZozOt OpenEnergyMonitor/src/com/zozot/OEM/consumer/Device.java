@@ -9,6 +9,7 @@ public class Device implements Parcelable {
 	private String sNome;
 	private String sStream;
 	public boolean bEnabled;
+	private int iTypical;
 
 	public void setbEnabled(boolean bEnabled) {
 		this.bEnabled = bEnabled;
@@ -17,20 +18,22 @@ public class Device implements Parcelable {
 	/**
 	 * @param iNodo
 	 * @param iDispositivo
+	 * @param iTypical 
 	 * @param nome
 	 */
-	public Device(int iNodo, int iDispositivo, String nome) {
+	public Device(int iNodo, int iDispositivo, int iTypical, String nome) {
 		super();
 		this.setIdNodo(iNodo);
 		this.setiIdDispositivo(iDispositivo);
 		this.setNomeDispositivo(nome);
-	
+		this.setTypical(iTypical);
 	}
 
 	public Device(Parcel in) {
 		setIdNodo(in.readInt());
 		setiIdDispositivo(in.readInt());
 		setNomeDispositivo(in.readString());
+		setTypical(in.readInt());
 		setsStreamName(in.readString());
 		bEnabled = in.readByte() != 0;
 	}
@@ -47,6 +50,7 @@ public class Device implements Parcelable {
 		dest.writeInt(getIdNodo());
 		dest.writeInt(getIdDispositivo());
 		dest.writeString(getNomeDispositivo());
+		dest.writeInt(getTypical());
 		dest.writeString(getStreamName());
 		dest.writeByte((byte) (bEnabled ? 1 : 0)); 
 	}
@@ -80,7 +84,7 @@ public class Device implements Parcelable {
 	public void setIdNodo(int iNodo) {
 		this.iNodo = iNodo;
 	}
-
+	
 	public String getStreamName() {
 		return sStream;
 	}
@@ -95,6 +99,14 @@ public class Device implements Parcelable {
 
 	public void setNomeDispositivo(String sNome) {
 		this.sNome = sNome;
+	}
+
+	public int getTypical() {
+		return iTypical;
+	}
+
+	public void setTypical(int iTypical) {
+		this.iTypical = iTypical;
 	}
 
 }

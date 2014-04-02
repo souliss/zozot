@@ -1,15 +1,20 @@
-package com.zozot.OEM.service;
+package com.zozot.OEM.ZozOtService;
 
 import java.util.ArrayList;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import com.zozot.OEM.consumer.R;
 import com.zozot.OEM.cloudservice.Messages;
+import com.zozot.OEM.consumer.DataPoint;
+import com.zozot.OEM.consumer.MyApplication;
+import com.zozot.OEM.consumer.R;
 import com.zozot.OEM.consumer.Constants;
 import com.zozot.OEM.consumer.Device;
 import com.zozot.OEM.consumer.PreferenceHelper;
 import com.zozot.OEM.consumer.SoulissDevicesHelper;
 import com.zozot.OEM.consumer.ZozOtActivity;
 import com.zozot.OEM.cloudservice.IHttpService;
+import com.zozot.OEM.JSONBuilderHelper.JSONBodyBuilder;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -29,12 +34,17 @@ import android.widget.Toast;
 
 public class ZozOtService extends Service {
 	CountDownTimer cdt=null;
+	CountDownTimer cdtPower=null;
 	private static final String TAG = ZozOtService.class.getSimpleName();
 	ArrayList<Device> aSoulissDevices;
 	IHttpService service;
 	HttpServiceConnection connection;
 	private boolean isPlaying=false;
 	PreferenceHelper opzioni ;
+	JSONBodyBuilder jsonBuilder= new JSONBodyBuilder();
+	//array che contiene la lista dei datapoints ancora da inserire
+	//SortedSet<DataPoint> sortedSetDataPoints= new TreeSet<DataPoint>();		
+	boolean bFlagSemaforo;
 	
 	public ZozOtService() {
 		// TODO Auto-generated constructor stub
@@ -49,26 +59,37 @@ public class ZozOtService extends Service {
 		String pkg=getPackageName();
 		Bundle extras = intent.getExtras();
 		
+		//recupera i deviced souliss ed i valori passati al service
 		aSoulissDevices=extras.getParcelableArrayList(pkg+"SoulissDevices"); //$NON-NLS-1$
 	//	final Parameters_Xively param=(Parameters_Xively) extras.getParcelable(pkg+"Parameters_Xively");
 		
-		// TODO Auto-generated method stub
 		opzioni = ZozOtActivity.getOpzioni();
 		//avvio il timer (solo se la temporizzazione è impostata ad un valore qualsiasi >0)
 		if (opzioni.getMyInterval()>0) {
 			cdt = new CountDownTimer(opzioni.getMyInterval(),1000){
 		        @Override
 		        public void onFinish() {
-		        	Log.d(TAG, "CountDownTimer - onFinish() ");        	 //$NON-NLS-1$
-		        //Cosa fare quando finisce
-		        	// *****************
-					// *****************
-					// RICHIESTA DATI ZOZZARIELLO E INVIO A XIVELY
-		        			        	
+		        	Log.v(TAG, "CountDownTimer (cdt) - onFinish() ");        	 //$NON-NLS-1$
+//l'ultimo parametro è false perchè non si deve fare il retrieving dei tipici per il controllo dei consumi		        			        	
 		        	MyHandler handler = new MyHandler();
-					SoulissDevicesHelper thr = new SoulissDevicesHelper(handler,opzioni, aSoulissDevices, service, Constants.PUSH_TO_CLOUD);
-					thr.start();
-					this.start();
+		        	// QUI VIENE FATTO IL RETRIEVING DEI DATI NON CONSUMO
+		        	SoulissDevicesHelper thr = new SoulissDevicesHelper(handler,opzioni, aSoulissDevices, service, Constants.RETRIEVING, false, jsonBuilder);
+		        	Log.v(TAG, "CountDownTimer (cdt) - onFinish() - Start Thread per il retrieving");
+					
+						//thr.start();
+					try {
+						thr.start();
+						thr.join(); //interrompe questo thread fino a quando quello chiamato non termina
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					// QUI VIENE FATTO IL PUSH DI TUTTI I DATI PRESENTI IN CODA 
+	    			thr = new SoulissDevicesHelper(handler,opzioni, aSoulissDevices, service, Constants.PUSH, false,jsonBuilder);
+	    			Log.v(TAG, "CountDownTimer (cdt) - onFinish() - Start Thread per il PUSH");
+	    			
+						thr.start();
+						this.start();
 		        }
 		        
 
@@ -84,9 +105,43 @@ public class ZozOtService extends Service {
 
 		        }
 		        }.start();
-		        
 		        String s=Messages.getString("ZozOtService.PushStart_text");
-			 Toast.makeText(getApplicationContext(),s , Toast.LENGTH_SHORT).show(); //$NON-NLS-1$
+				 Toast.makeText(getApplicationContext(),s , Toast.LENGTH_SHORT).show(); //$NON-NLS-1$
+		}
+		
+		if (opzioni.getMyIntervalForPowerTypical()>0) {
+		    cdtPower= new CountDownTimer(opzioni.getMyIntervalForPowerTypical(),1000){
+		    		@Override
+		    		public void onFinish() {
+		    			Log.v(TAG, "CountDownTimer (cdtPower) - onFinish() ");        	 //$NON-NLS-1$
+		    					        	
+		    			MyHandler handler = new MyHandler();
+		    			//l'ultimo paramentro è false perchè deve fare il retrieving dei tipici per il controllo dei consumi
+		    			//QUI VIENE FATTO SOLO IL RETRIEVING DEI DATI CONSUMO
+		    			SoulissDevicesHelper thr = new SoulissDevicesHelper(handler,opzioni, aSoulissDevices, service, Constants.RETRIEVING, true, jsonBuilder);
+		    			Log.v(TAG, "CountDownTimer (cdtPower) - onFinish() - Start Thread per il retrieving");
+		    			thr.start();
+						
+		    			this.start();
+		    		}
+		    		
+		    		
+		    		@Override
+		    		public void onTick(long millisUntilFinished) {
+		    		    //cosa fare ad ogni passaggio
+		    			//recuperato il valore dal thread, spedisco in broadcast in modo che l'Activity principale la possa recuperare
+		    		    Intent i = new Intent(Constants.PUSH_POWER_TYPICALS_RESULT_UPDATE_INTENT_ACTION_NAME);
+		    		    //trasformazione in secondi
+		    		    long sec = millisUntilFinished/1000;  
+		    		    i.putExtra(Constants.COUNTDOWN_KEY, sec);
+		    		    sendBroadcast(i);
+		    		
+		    		}
+		    		}.start();
+		    		String s=Messages.getString("ZozOtService.PushStart_text");
+		    		Log.d(TAG, s);
+					Toast.makeText(getApplicationContext(),s , Toast.LENGTH_SHORT).show(); //$NON-NLS-1$		
+		     
 		
 	}
 		//return super.onStartCommand(intent, flags, startId);
@@ -109,19 +164,18 @@ public class ZozOtService extends Service {
 	@Override
 	  public void onDestroy() {
 		releaseService();
-		Toast.makeText(this, Messages.getString("ZozOtService.ServiceInterrotto_text"), Toast.LENGTH_SHORT).show(); //$NON-NLS-1$
+		String s=Messages.getString("ZozOtService.ServiceInterrotto_text");
+		Log.d(TAG, s);
+		Toast.makeText(this, s, Toast.LENGTH_SHORT).show(); //$NON-NLS-1$
 	  }
 
 	/**
 	 * Binds this activity to the service.
 	 */
 	public void initService() {
-			connection = new HttpServiceConnection();
-		
+		connection = new HttpServiceConnection();
 		Intent i = new Intent("com.zozot.OEM.cloudservice.HttpService"); //$NON-NLS-1$
-		
 		boolean ret = bindService(i, connection, Context.BIND_AUTO_CREATE);
-		
 		Log.d(TAG, "initService() bound with " + ret); //$NON-NLS-1$
 	}
 
@@ -198,7 +252,8 @@ public class ZozOtService extends Service {
 	private void releaseService() {
 		unbindService(connection);
 		connection = null;
-		cdt.cancel();
+		if (cdt!=null) cdt.cancel();
+		if (cdtPower!=null)	cdtPower.cancel();
 		Log.d(TAG, "releaseService() unbound."); //$NON-NLS-1$
 	}
 
@@ -213,43 +268,32 @@ public class ZozOtService extends Service {
 	        Intent i = new Intent(Constants.PUSH_RESULT_UPDATE_INTENT_ACTION_NAME);
 	        i.putExtra(Constants.PUSH_RESULT_UPDATE_KEY, value);
 	        sendBroadcast(i);
+	      
+	        //salvo il valore per l'eventuale ripristino in caso di rotazione dello schermo e riavvio dell'activity principale
+			MyApplication.getInstance().appendTextBoxLog("\n" + value);
 	        
-	        
-//	        TextView resultField = (TextView) findViewById(R.id.result);
-//	        //resultField.setText(value);
-//	        resultField.append("\n"+value);
-//	        resultField.setMaxLines(50);
-//	        final Layout layout = resultField.getLayout();
-//	        if(layout != null){
-//	            int scrollDelta = layout.getLineBottom(resultField.getLineCount() - 1) - resultField.getScrollY() - resultField.getHeight();
-//            if(scrollDelta > 0)
-//	            if (resultField.getGravity() != Gravity.BOTTOM){
-//	            	resultField.setGravity(Gravity.BOTTOM);	
-//	            }
-//            	
-//	            	//resultField.scrollBy(0, -scrollDelta);
-//	        }
-//	    }
 	    }
 	  }
 	    
 	    
 	}
 
-		public class HttpServiceConnection implements ServiceConnection {
-					
+public class HttpServiceConnection implements ServiceConnection {
+	private static final String TAG =  Constants.TAG_LivelloAvvisiServizio;				
 	public void onServiceConnected(ComponentName name, IBinder boundService) {
 		service = IHttpService.Stub.asInterface((IBinder) boundService);
-		Log.d(ZozOtActivity.TAG, "onServiceConnected() connected"); //$NON-NLS-1$
+		Log.d(TAG, "onServiceConnected() connected"); //$NON-NLS-1$
 		//Toast.makeText(ZozOtActivity.this, "Service connected",Toast.LENGTH_LONG).show();
 	}
 	
 	public void onServiceDisconnected(ComponentName name) {
 		service = null;
-		Log.d(ZozOtActivity.TAG, "onServiceDisconnected() disconnected"); //$NON-NLS-1$
+		Log.d(TAG, "onServiceDisconnected() disconnected"); //$NON-NLS-1$
 		//Toast.makeText(ZozOtActivity.this, "Service connected",Toast.LENGTH_LONG).show();
 	}
 		}
+
+		
 	
 	
 }
