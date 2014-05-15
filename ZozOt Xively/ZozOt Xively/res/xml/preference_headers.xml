@@ -38,6 +38,8 @@
             android:title="@string/scheduleIntervalPowerRetrieving_title" />
    
  </PreferenceCategory>
- 
+  <PreferenceCategory android:title="Credits">
+      <Preference android:summary="@string/about_desc_condensed" android:title="@string/about_desc"/>
+  </PreferenceCategory>
   
 </PreferenceScreen>

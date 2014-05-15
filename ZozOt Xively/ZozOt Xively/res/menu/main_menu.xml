@@ -2,12 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
    <item
-        android:id="@+id/opzioni"
-        android:orderInCategory="100"
-        android:title="@string/opzioni_desc"/>
+        android:id="@+id/options"
+        android:title="@string/options_desc"/>
    
-   <item android:id="@+id/canali" android:orderInCategory="110" android:title="@string/canali_desc"></item>
-   <item android:id="@+id/GetNodesAndStream" android:title="@string/GetNodesAndStream_desc"></item>
+   <item android:id="@+id/getNodesAndStream" android:title="@string/getNodesAndStream_desc"></item><item android:id="@+id/streams" android:title="@string/streams_desc"></item>
+   
 
 </menu>                  
    

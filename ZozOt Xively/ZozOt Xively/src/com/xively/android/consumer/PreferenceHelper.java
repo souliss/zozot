@@ -1,9 +1,11 @@
 package com.xively.android.consumer;
 
 import java.io.Serializable;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class PreferenceHelper implements Serializable {
 	
@@ -26,6 +28,12 @@ public class PreferenceHelper implements Serializable {
 	public boolean isConfigured=false;
 
 	private int[] powerTypicalsArray;
+
+	//array che contiene la lista dei datapoints ancora da inserire
+	//SortedSet<DataPoint> sortedSetDataPoints= new TreeSet<DataPoint>(); 
+	//SortedSet<DataPoint> sortedSetDataPoints;
+	
+	private static final String TAG =  Constants.TAG_LivelloAvvisiApplicazione;
 	
 	
 
@@ -210,5 +218,13 @@ private void isConfiguredCheck() {
 	public int[] getPowerTypicalsArray() {
 		return powerTypicalsArray;
 	}
-	
+	public String getStringXML(int iRVal){
+		try{
+			
+			return contx.getString(iRVal);		
+		}catch(Exception e){
+			Log.v(TAG, "ERROR to get string from preferences: " + e.getMessage());
+			return "NULL";
+		}
+}
 }
