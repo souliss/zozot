@@ -194,8 +194,6 @@ public class ZozOtActivity extends Activity {
 						//scorre i nodi, variabile "i"
 						JSONArray jArraySlots;
 						for (int i = 0; i < jArray.length(); i++) {
-							//legge chiave "id"
-							//JSONObject jObject = jArray.getJSONObject(i).getJSONObject("id");
 							//legge chiave "slot"
 							jArraySlots = ((JSONArray)((JSONObject) jArray.get(i)).get("slot"));
 							//scorre gli "slot" disponibili
