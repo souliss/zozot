@@ -4,7 +4,7 @@
     android:versionCode="1"
     android:versionName="1.0" >
 <uses-permission android:name="android.permission.INTERNET"/>
-<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
  
     <uses-sdk
         android:minSdkVersion="9"
@@ -14,12 +14,13 @@
         android:allowBackup="true"
         android:icon="@drawable/oem_launcher"
         android:label="@string/app_name">
-  
+
             
           
         <activity
              android:name="com.zozot.OEM.consumer.ZozOtActivity" 
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:configChanges="orientation|keyboardHidden|screenSize">
             
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,9 +29,10 @@
             </intent-filter>
         </activity>
         
-     <activity android:name="com.zozot.OEM.consumer.PreferencesActivity" android:label="@string/app_name" />
+     <activity android:name=".PreferencesActivity" android:label="@string/app_name" />
         
-     <activity android:name="com.zozot.OEM.consumer.AssociationsActivity" android:label="@string/app_name" />
+     <activity android:name=".AssociationsActivity" android:label="@string/app_name" />
+     
      
     <service android:name="com.zozot.OEM.cloudservice.HttpService" >
             <intent-filter>

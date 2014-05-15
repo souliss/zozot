@@ -206,34 +206,9 @@ public class ZozOtService extends Service {
 	PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
 	notificationBuilder.setContentIntent(contentIntent);
-
-	// Impostiamo il suono, le luci e la vibrazione di default
 	notificationBuilder.setDefaults(Notification.FLAG_FOREGROUND_SERVICE);
-	      
-	//final int SIMPLE_NOTIFICATION_ID = 1;
-	//mNotificationManager.notify(SIMPLE_NOTIFICATION_ID, notificationBuilder.build());
-	
-	//******************** QUESTA FUNZIONA
-//	      Notification note=new Notification(R.drawable.xively_launcher, "ZozOt Service",System.currentTimeMillis()); //$NON-NLS-1$
-//	    	    
-//	      Intent i=new Intent(getApplicationContext(), ZozOtService.class);
-//	    
-//	      i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
-//	                 Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//	    
-//	      PendingIntent pi=PendingIntent.getActivity(getApplicationContext(), 0,
-//	                                                  i, 0);
-//	      
-//	      int stringId = getApplicationContext().getApplicationInfo().labelRes;
-//	      
-//
-//	      note.setLatestEventInfo(getApplicationContext(), getApplicationContext().getString(stringId), getApplicationContext().getResources().getString(R.string.executing_Service) ,pi);
-//
-//	      note.flags|=Notification.FLAG_FOREGROUND_SERVICE;
-	  	//FINE******************** QUESTA FUNZIONA
-	      
-	      
-	      startForeground(1337, notificationBuilder.build());
+      
+    startForeground(1337, notificationBuilder.build());
 	    }
 	  }
 

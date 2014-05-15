@@ -8,7 +8,7 @@ import android.content.Intent;
 
 public class Constants {
 	public static final String TAG_LivelloAvvisiApplicazione="ZozOtOEM";
-	public static final String TAG_LivelloAvvisiServizio="ZozOtService";
+	public static final String TAG_LivelloAvvisiServizio="ZozOtServiceOEM";
 	
 		
 	

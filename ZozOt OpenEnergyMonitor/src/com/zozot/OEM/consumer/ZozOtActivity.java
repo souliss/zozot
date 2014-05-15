@@ -146,11 +146,11 @@ public class ZozOtActivity extends Activity {
 		public boolean onOptionsItemSelected(MenuItem item) {
 			int id = item.getItemId();
 	
-			if (id == R.id.opzioni) {
+			if (id == R.id.options) {
 				Intent myIntents = new Intent(this, PreferencesActivity.class);
 				startActivityForResult(myIntents,Constants.PREFERENCES_ACTIVITY);
 				return true; 
-			} else if (id == R.id.canali) {
+			} else if (id == R.id.streams) {
 				if(opzioni.isConfigured){
 				Intent myIntents2 = new Intent(this, AssociationsActivity.class);
 				String pkg=getPackageName();
@@ -163,7 +163,7 @@ public class ZozOtActivity extends Activity {
 					
 				return true;
 				
-			} else if (id == R.id.GetNodesAndStream) {
+			} else if (id == R.id.getNodesAndStream) {
 				
 				//avvia un thread per riempire gli array con i feeds di OEM ed i devides di Souliss solo quando il servizio di connessione di OEM è partito
 	if(opzioni.isConfigured){
@@ -194,15 +194,15 @@ public class ZozOtActivity extends Activity {
 					 }
 					// parse JSON data
 					try {
-						JSONArray jArray = new JSONArray(s);
+						JSONObject jsonObject=new JSONObject(s);
+						JSONArray jArray = jsonObject.getJSONArray("id");
 						aSoulissDevices.clear();
 		//scorre l'array JSON per leggerne il contenuto
 						//scorre i nodi, variabile "i"
+						JSONArray jArraySlots;
 						for (int i = 0; i < jArray.length(); i++) {
-							//legge chiave "id"
-							JSONObject jObject = jArray.getJSONObject(i).getJSONObject("id");
 							//legge chiave "slot"
-							JSONArray jArraySlots = jObject.getJSONArray("slot");
+							jArraySlots = ((JSONArray)((JSONObject) jArray.get(i)).get("slot"));
 							//scorre gli "slot" disponibili
 							 for (int j = 0; j < jArraySlots.length(); j++) {
 								 //i è il nodo
@@ -212,10 +212,10 @@ public class ZozOtActivity extends Activity {
 								 aSoulissDevices.add(new Device(i,j, iTypical, sNomeNodo));
 								 dbHelper.insertSoulissDevice(dbHelper.getWritableDatabase(), sNomeNodo, String.valueOf(i),String.valueOf(j), String.valueOf(iTypical), null, false);
 							 }
-							 if(aSoulissDevices != null && aSoulissDevices.size()>0 && aOEMFeeds != null && aOEMFeeds.size()>0) {
-								 isOK=true;
-							 }
 						}
+						 if(aSoulissDevices != null && aSoulissDevices.size()>0 && aOEMFeeds != null && aOEMFeeds.size()>0) {
+							 isOK=true;
+						 }
 					} catch (JSONException e) {
 					
 						Log.e("JSONException", "Error: " + e.toString());
@@ -252,16 +252,13 @@ public class ZozOtActivity extends Activity {
 					 
 					 if (iNodi >0 && iStreams>0) Toast.makeText(ZozOtActivity.this, "Trovati " + iNodi +" dispositivi e " + iStreams + " canali", Toast.LENGTH_SHORT).show(); 
 		               
-					 //se la lettura degli stream e dei devices è andata a buon fine allora ripristino il contatore RETRY
-					 if(aSoulissDevices != null && aSoulissDevices.size()>0 && aOEMFeeds != null && aOEMFeeds.size()>0) {
-						 iNrFails=Constants.CONNECTION_RETRY_NUMBERS;
-						
-					 }
-		                
 		                }
 				});
 					}
-						}}
+						}
+						 //ripristino il contatore RETRY, sia che la lettura degli stream e dei devices sia andata a buon fine che sia terminata dopo il numero massimo di tentativi 
+						iNrFails=Constants.CONNECTION_RETRY_NUMBERS;
+						}
 	}).start();
 			}else {
 				 Toast.makeText(ZozOtActivity.this, "Configurare...", Toast.LENGTH_SHORT).show();

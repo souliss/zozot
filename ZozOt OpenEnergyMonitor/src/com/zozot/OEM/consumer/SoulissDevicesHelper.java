@@ -7,11 +7,6 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.http.HttpEntity;
@@ -30,15 +25,9 @@ import com.zozot.OEM.JSONBuilderHelper.JSONResponseHelper;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
-import android.text.format.Time;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.app.ListActivity;
-import android.os.Bundle;
-
 
 
 public class SoulissDevicesHelper extends Thread {
@@ -96,7 +85,8 @@ public class SoulissDevicesHelper extends Thread {
 							String sURL= opzioni.getMyUrl();
 							 //INVIA LA RICHIESTA A SOULISS E RACCOGLIE LA RISPOSTA 
 							String s = getUrlResponse(sURL);
-							jArray = new JSONArray(s);
+							JSONObject jObj=new JSONObject(s);
+							jArray = jObj.getJSONArray("id");
 			}catch  (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -193,8 +183,6 @@ public class SoulissDevicesHelper extends Thread {
 				
 				
 				if(bResponse){
-					Log.d(TAG, this.getClass().getName() + " PUSH Esito: " + bResponse + ". Inseriti " + iNumeroElementiPush + " elementi");
-			//		notifyMessage(formatter.format(date.getTime()) + " PUSH Esito: " + bResponse + ". Inseriti " + iNumeroElementiPush + " elementi");
 					//se esistono ancora elementi da inserire allora pongo bResponse =false in modo da non uscire dal ciclo
 					if(jsonBuilder.size()>Constants.PUSH_MIN_NUMBER) {
 						bResponse=false;
@@ -212,8 +200,9 @@ public class SoulissDevicesHelper extends Thread {
 			}//END if (!jsonBuilder.isEmpty())	
 			
 			if(!bResponse){
-				Log.d(TAG, this.getClass().getName() + " ERRORE - Push " + jsonBuilder.size() + " datapoints rinviato");
-				notifyMessage(formatter.format(date.getTime()) + " ERRORE - Eseguiti " + iRetry + " tentativo/i. Push " + jsonBuilder.size() + " datapoints rinviato");
+				Log.d(TAG, this.getClass().getName() + " ERRORE - Push " + jsonBuilder.size() + opzioni.getStringXML(R.string.postponed));
+				//notifyMessage(formatter.format(date.getTime()) + " ERRORE - Eseguiti " + iRetry + " tentativo/i. Push " + jsonBuilder.size() + " datapoints rinviato");
+				notifyMessage(formatter.format(date.getTime()) + " ERRORE - Push " + jsonBuilder.size() + opzioni.getStringXML(R.string.postponed));
 			}
 			break;
 			}
@@ -230,8 +219,8 @@ public class SoulissDevicesHelper extends Thread {
 		}else {
 			iNumeroElementiPush/=iDivisionePer;
 		}
-				Log.e("Divisione", "Divisione della lista per " + iDivisionePer + ". Verrà eseguito il PUSH a gruppi di " + iNumeroElementiPush + " elementi per volta.");
-				notifyMessage(formatter.format(date.getTime()) + " ERRORE - TimeOut - Il PUSH verrà eseguito a pacchetti di " + iNumeroElementiPush + " elementi per volta.");
+			Log.e("Split", String.valueOf(R.string.timeoutError + iNumeroElementiPush + R.string.elements));
+				notifyMessage(formatter.format(date.getTime()) + R.string.timeoutError + iNumeroElementiPush + R.string.elements);
 	}
 	 
 	public static String getUrlResponse(String url) {
@@ -242,7 +231,7 @@ public class SoulissDevicesHelper extends Thread {
 				HttpEntity entity = response.getEntity();
 				return convertStreamToString(entity.getContent());
 			} catch (Exception e) {
-				Log.e(TAG, "Connessione fallita", e);
+				Log.e(TAG, "Connection Fail", e);
 			}
 			return null;
 		}
@@ -294,19 +283,20 @@ public class SoulissDevicesHelper extends Thread {
 					if(response.getStatusCode()==200){
 						//se il push è andato a buon fine allora elimino gli elementi presenti nella lista temporanea
 						//INVIO NOTIFICA ALL'ACTIVITY PRINCIPALE
-						notifyMessage(formatter.format(date.getTime()) + " inseriti " + r.getElementiCaricati() + " datapoints");
+						Log.d(TAG, opzioni.getStringXML(R.string.PushDone) + r.getElementiCaricati() + opzioni.getStringXML(R.string.elements));
+						notifyMessage(formatter.format(date.getTime()) +" " +opzioni.getStringXML(R.string.PushDone) +" " + r.getElementiCaricati()+" " + opzioni.getStringXML(R.string.elements));
 						//jsonBuilder.clear(iNumeroElementiDaCaricare);
 						jsonBuilder.clear(r.getElementiCaricati() );
-						
-						Log.d(TAG, this.getClass().getName() + " Push OK, cancellazione elementi dalla lista: " + r.getElementiCaricati() );
+					
+						Log.d(TAG, this.getClass().getName() + " Push OK, delete list: " + r.getElementiCaricati() );
 						//se l'array è vuoto allora la volta successiva posso caricare tutti gli elementi senza i limiti dovuti al timeout. Quindi riporto iNumeroElementiDaCaricare a Null
 						if(jsonBuilder.size()==0) {
-							Log.d(TAG, this.getClass().getName() + " Lista vuota. Caricati tutti gli elementi)");
+							Log.d(TAG, this.getClass().getName() + " List empty");
 						}
 						return true;
 					} else {
 						//notifyMessage(formatter.format(date.getTime()) + " ERRORE:  " + response.getMessage() + " - Push " + jsonBuilder.size() + " datapoints");
-						Log.d(TAG, this.getClass().getName() + " ERRORE: StatusCode="+response.getStatusCode() +" Desc: " + response.getContent() +" - Push " + r.getElementiCaricati()  + " datapoints");
+						Log.d(TAG, this.getClass().getName() + " ERROR: StatusCode="+response.getStatusCode() +" Desc: " + response.getContent() +" - Push " + r.getElementiCaricati()  + " datapoints");
 						//altrimenti inserisco nuovamente gli elementi nella lista e cancello la lista temporanea
 				//		notifyMessage(formatter.format(date.getTime()) + " ERRORE: StatusCode="+response.getStatusCode() +" Desc: " + response.getContent() +" - Push " + iNumeroElementiDaCaricare + " datapoints");
 						//if (response.getContent().contains("TimeoutException") || response.getContent().contains("RequestUnsuccessfulException")) {
@@ -325,43 +315,22 @@ public class SoulissDevicesHelper extends Thread {
 
 		
 		public static double getSensorValue(JSONArray jArray, int iNodo, int iDispositivo) throws JSONException {
-			//seleziono il nodo 
-			JSONObject jObject = jArray.getJSONObject(iNodo).getJSONObject("id");
-			JSONArray jArraySlots = jObject.getJSONArray("slot");
-			//a questo punto basta selezionare lo slot di interesse
-			return jArraySlots.getJSONObject(iDispositivo).getDouble("val");
-			
+			return ((JSONObject) ((JSONArray)((JSONObject) jArray.get(iNodo)).get("slot")).get(iDispositivo)).getDouble("val");
 		}
 
 		public static String getSensorItemName(JSONArray jArray, int iNodo, int iDispositivo) throws JSONException {
-			//seleziono il nodo 
-			JSONObject jObject = jArray.getJSONObject(iNodo).getJSONObject("id");
-			JSONArray jArraySlots = jObject.getJSONArray("slot");
-			//a questo punto basta selezionare lo slot di interesse
-			return jArraySlots.getJSONObject(iDispositivo).getString("ddesc");
-			
+			return ((JSONObject) ((JSONArray)((JSONObject) jArray.get(iNodo)).get("slot")).get(iDispositivo)).getString("ddesc");
 		}
 		
 		public static int getHealtValue(JSONArray jArray, int iNodo) throws JSONException {
-			//seleziono il nodo 
-			JSONObject jObject = jArray.getJSONObject(iNodo).getJSONObject("id");
-			return jObject.getInt("hlt");
-			
+			return ((JSONObject) jArray.get(iNodo)).getInt("hlt");
 		}
 		
 		public static int getTypical(JSONArray jArray, int iNodo, int iDispositivo) throws JSONException {
-			//seleziono il nodo 
-			JSONObject jObject = jArray.getJSONObject(iNodo).getJSONObject("id");
-			JSONArray jArraySlots = jObject.getJSONArray("slot");
-			//a questo punto basta selezionare lo slot di interesse
-			return Integer.parseInt(jArraySlots.getJSONObject(iDispositivo).getString("typ"));
-			
+			return Integer.parseInt(((JSONObject) ((JSONArray)((JSONObject) jArray.get(iNodo)).get("slot")).get(iDispositivo)).getString("typ"));
 		}
 
 		private boolean isAPowerTypical(int iTypical) {
-			ArrayList<Integer> arrayPowerTypicals =new ArrayList<Integer>();
-			
-//			ArrayList<Integer> a=opzioni.getPowerTypicalsArray();
 			
 			int[] powerTypicalsArray=opzioni.getPowerTypicalsArray();
 

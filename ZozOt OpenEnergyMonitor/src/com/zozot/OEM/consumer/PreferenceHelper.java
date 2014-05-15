@@ -1,9 +1,13 @@
 package com.zozot.OEM.consumer;
 
 import java.io.Serializable;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
+import android.util.Log;
+import android.content.res.Resources;
 
 public class PreferenceHelper implements Serializable {
 	
@@ -22,10 +26,19 @@ public class PreferenceHelper implements Serializable {
 	
 	
 	private boolean bPushServiceState=false;
-
+	private boolean startOnBoot = false;
+	
 	public boolean isConfigured=false;
 
 	private int[] powerTypicalsArray;
+
+	//array che contiene la lista dei datapoints ancora da inserire
+	//SortedSet<DataPoint> sortedSetDataPoints= new TreeSet<DataPoint>(); 
+	//SortedSet<DataPoint> sortedSetDataPoints;
+	
+	private static final String TAG =  Constants.TAG_LivelloAvvisiApplicazione;
+
+
 	
 	
 
@@ -64,45 +77,11 @@ public class PreferenceHelper implements Serializable {
 		setMyUrl(prefs.getString("UrlZozzariello", "http://127.0.0.1:8080/structure?all"));
 		
 		setMyServiceState(prefs.getBoolean("pushState", false));
-		//setMyUrl("http://127.0.0.1:8080/structure?all");
+		setStartOnBoot(prefs.getBoolean("startOnBoot", false));
 		
-		 
 		
-				/*lightTheme = prefs.getBoolean("checkboxHoloLight", true);
-		IPPreference = prefs.getString("edittext_IP", "");
-		IPPreferencePublic = prefs.getString("edittext_IP_pubb", "");
-		DimensTesto = prefs.getString("listPref", "0");
-		PrefFont = prefs.getString("fontPref", "Futura.ttf");
-		remoteTimeoutPref = Integer.parseInt(prefs.getString("remoteTimeout", "10000"));
-		dataServiceInterval = prefs.getInt("updateRate", 10) * 1000;
-		homeThold = prefs.getInt("distanceThold", 150);
-		dataServiceEnabled = prefs.getBoolean("checkboxService", false);
-		webserverEnabled = prefs.getBoolean("webserverEnabled", false);
-		userIndex = prefs.getInt("userIndex", -1);
-		nodeIndex = prefs.getInt("nodeIndex", -1);
-		animations = prefs.getBoolean("checkboxAnimazione", true);
-		antitheftPresent = prefs.getBoolean("antitheft", false);
-		antitheftNotify = prefs.getBoolean("antitheftNotify", false);
-		eqLow= prefs.getFloat("eqLow", 1f);
-		eqMed= prefs.getFloat("eqMed", 1f);
-		eqHigh= prefs.getFloat("eqHigh", 1f);
-		Calendar fake = Calendar.getInstance();
-		fake.add(Calendar.MONTH, -2);//Default value in the past
-		serviceLastrun= prefs.getLong("serviceLastrun", Calendar.getInstance().getTimeInMillis());
-		nextServiceRun= prefs.getLong("nextServiceRun", fake.getTimeInMillis());
-		try {
-			ListDimensTesto = Float.valueOf(DimensTesto);
-		} catch (Exception e) {
-			ListDimensTesto = 14;
-		}
-*/
-		/*
-		 * try { cachedInet = InetAddress.getByName(IPPreference); } catch
-		 * (UnknownHostException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); }
-		 */
+		
 	}
-
 
 	public String getMyApiKey() {
 		return myApiKey;
@@ -200,7 +179,6 @@ private void isConfiguredCheck() {
 		editor.commit();
 	}
 
-
 	public void setPowerTypicalsArray(int[] powerTypicalsArray2) {
 		this.powerTypicalsArray= powerTypicalsArray2;
 		
@@ -209,6 +187,28 @@ private void isConfiguredCheck() {
 
 	public int[] getPowerTypicalsArray() {
 		return powerTypicalsArray;
+	}
+	
+	public String getStringXML(int iRVal){
+		try{
+			
+			return contx.getString(iRVal);		
+		}catch(Exception e){
+			Log.v(TAG, "ERROR to get string from preferences: " + e.getMessage());
+			return "NULL";
+		}
+}
+	
+	private void setStartOnBoot(boolean startOnBoot) {
+		this.startOnBoot=startOnBoot;
+		editor.putBoolean("startOnBoot", this.startOnBoot);
+		editor.commit();
+		
+	}
+
+	public boolean setStartOnBoot() {
+		// TODO Auto-generated method stub
+		return startOnBoot;
 	}
 	
 }

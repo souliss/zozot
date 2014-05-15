@@ -4,14 +4,14 @@
       
    <EditTextPreference android:title="@string/APIKey_title"
 			android:dialogTitle="@string/APIKey_title"
-			android:dialogMessage="@string/APIKey_desc" android:key="@string/APIKey"/>
+			android:dialogMessage="@string/APIKey_desc" android:key="@string/APIKey" android:summary="@string/APIKey_desc"/>
        
   </PreferenceCategory>
 
  <PreferenceCategory android:title="Impostazioni Souliss">
            
    <EditTextPreference android:dialogTitle="@string/UrlZozzariello_title" 
-		android:defaultValue="http://127.0.0.1:8080/structure?all" android:dialogMessage="@string/UrlZozzariello_desc" android:key="@string/UrlZozzariello" android:title="@string/UrlZozzariello_title"/>
+		android:defaultValue="http://127.0.0.1:8080/structure?all" android:dialogMessage="@string/UrlZozzariello_desc" android:key="@string/UrlZozzariello" android:title="@string/UrlZozzariello_title" android:summary="@string/UrlZozzariello_desc"/>
   
 
    </PreferenceCategory>
@@ -22,7 +22,7 @@
             android:entries="@array/scheduleInterval"
             android:entryValues="@array/scheduleIntervalValues"
             android:key="@string/scheduleInterval"
-            android:summary=""
+            android:summary="@string/scheduleInterval_title_desc"
             android:title="@string/scheduleInterval_title" />
    
     <ListPreference
@@ -30,10 +30,15 @@
             android:entries="@array/scheduleIntervalPowerRetrieving"
             android:entryValues="@array/scheduleIntervalPowerRetrievingValues"
             android:key="@string/scheduleIntervalPowerRetrieving"
-            android:summary=""
+            android:summary="@string/scheduleIntervalPowerRetrieving_title_desc"
             android:title="@string/scheduleIntervalPowerRetrieving_title" />
+   <!--  TO DO: <CheckBoxPreference android:title="@string/startOnBootCheckBox_desc" android:key="startOnBoot"/>  -->
+    
    
  </PreferenceCategory>
+  <PreferenceCategory android:title="Credits">
+      <Preference android:summary="@string/about_desc_condensed" android:title="@string/about_desc"/>
+  </PreferenceCategory>
  
   
 </PreferenceScreen>
