@@ -1,16 +1,10 @@
 package com.zozot.OEM.JSONBuilderHelper;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TimeZone;
-import java.util.TreeSet;
 
-import android.os.Bundle;
-import android.text.format.Time;
 import android.util.Log;
 
 import com.zozot.OEM.cloudservice.UriBuilder;
@@ -43,7 +37,7 @@ public class JSONBodyBuilder {
 			throws InterruptedException {
 		// TODO CREAZIONE BODY
 		sBody="";
-				// se il numero di elementi da caricare è maggiore della
+				// se il numero di elementi da caricare ï¿½ maggiore della
 				// dimensione dell'array allora pongo l'indice massimo alla dimensione dell'array
 				if (iNumeroElementiDaCaricare > arrayListDataPoints.size())
 				{
@@ -68,11 +62,8 @@ public class JSONBodyBuilder {
 					Iterator<DataPoint> it = arrayListDataPointsTMP.iterator();
 
 					DataPoint elemento = null;
-					String sStream_elementoTMP = null;
-					
 					Log.d(TAG, this.getClass().getName() + " Coda: "
 							+ arrayListDataPointsTMP.size());
-					String tmpData="";
 					boolean bFlagPrimaVolta=true;
 					String sPrecTime = null;
 					boolean bFlagExit =false;
@@ -89,7 +80,7 @@ public class JSONBodyBuilder {
 							iNumeroElemento++; // incremento il numero di elementi
 							// inseriti
 						}else if(sPrecTime!=null && sPrecTime.equals(elemento.getData())){
-							//se non è la prima volta allora inserisco la virgola prima dell'elemento successivo
+							//se non ï¿½ la prima volta allora inserisco la virgola prima dell'elemento successivo
 							sBody+=",";
 							sBody+= UriBuilder.encodeDatastreamAndValue(elemento.getStream(),elemento.getValore());
 							iNumeroElemento++; // incremento il numero di elementi
@@ -149,15 +140,15 @@ public class JSONBodyBuilder {
 //			sortedSetDataPoints.clear();
 //	}
 
-	// la cancellazione così non funziona, e se funziona è troppo lenta
+	
 	public synchronized void clear(Integer iNumeroElementiDaCaricare) {
-		// cancella dalla lista gli elementi già caricati
+		// cancella dalla lista gli elementi giï¿½ caricati
 		// estraggo una sublist, cancello la lista
-		//se il numero di elementi caricati è uguale a quelli rimasti in lista (e da cancellare) allora semplicemente cancelo tutta la lista
+		//se il numero di elementi caricati ï¿½ uguale a quelli rimasti in lista (e da cancellare) allora semplicemente cancelo tutta la lista
 		if(iNumeroElementiDaCaricare>=arrayListDataPoints.size()){
 			arrayListDataPoints.clear();
 		} else {
-			//...altrimenti salvo prima la porzione rimanente di lista, cancello tutto e poi inserisco la parte salvata (faccio così perchè in altri modi ottengo errori
+			//...altrimenti salvo prima la porzione rimanente di lista, cancello tutto e poi inserisco la parte salvata (faccio cosï¿½ perchï¿½ in altri modi ottengo errori
 					ArrayList<DataPoint> arrayListDataPointsTMP = new ArrayList<DataPoint>();
 					arrayListDataPointsTMP.addAll(arrayListDataPoints.subList(iNumeroElementiDaCaricare,arrayListDataPoints.size()));
 					arrayListDataPoints.clear();

@@ -7,6 +7,10 @@ package com.zozot.OEM.cloudservice.exception;
  */
 public class RequestUnsuccessfulException extends XClientException
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7869561825106171310L;
 	int statusCode;
 
 	public RequestUnsuccessfulException(String msg, Throwable t)

@@ -1,7 +1,7 @@
 package com.zozot.OEM.consumer;
 
 
-import java.lang.Thread.State;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +10,6 @@ import org.apache.http.Header;
 import com.zozot.OEM.consumer.R;
 import com.zozot.OEM.database.DatabaseHelper;
 
-import android.R.color;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -95,7 +94,7 @@ public class AssociationsActivity extends Activity {
 	    	
 	    	
 	        String[] listaStreamPerSpinner=new String[aXivelyFeeds.size()+1];
-	        //la prima voce è la voce nulla
+	        //la prima voce ï¿½ la voce nulla
 	        listaStreamPerSpinner[0]=Constants.NULL_XIVELY_STREAM_NAME;
 	        //carica i nomi degli stream disponibili nello spinner
 	        int iSelectedPosition=0;

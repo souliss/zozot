@@ -1,11 +1,8 @@
 package com.zozot.OEM.ZozOtService;
 
 import java.util.ArrayList;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import com.zozot.OEM.cloudservice.Messages;
-import com.zozot.OEM.consumer.DataPoint;
 import com.zozot.OEM.consumer.MyApplication;
 import com.zozot.OEM.consumer.R;
 import com.zozot.OEM.consumer.Constants;
@@ -64,22 +61,22 @@ public class ZozOtService extends Service {
 	//	final Parameters_Xively param=(Parameters_Xively) extras.getParcelable(pkg+"Parameters_Xively");
 		
 		opzioni = ZozOtActivity.getOpzioni();
-		//avvio il timer (solo se la temporizzazione è impostata ad un valore qualsiasi >0)
+		//avvio il timer (solo se la temporizzazione ï¿½ impostata ad un valore qualsiasi >0)
 		if (opzioni.getMyInterval()>0) {
 			cdt = new CountDownTimer(opzioni.getMyInterval(),1000){
 		        @Override
 		        public void onFinish() {
 		        	Log.v(TAG, "CountDownTimer (cdt) - onFinish() ");        	 //$NON-NLS-1$
-//l'ultimo parametro è false perchè non si deve fare il retrieving dei tipici per il controllo dei consumi		        			        	
+//l'ultimo parametro ï¿½ false perchï¿½ non si deve fare il retrieving dei tipici per il controllo dei consumi		        			        	
 		        	MyHandler handler = new MyHandler();
 		        	// QUI VIENE FATTO IL RETRIEVING DEI DATI NON CONSUMO
 		        	SoulissDevicesHelper thr = new SoulissDevicesHelper(handler,opzioni, aSoulissDevices, service, Constants.RETRIEVING, false, jsonBuilder);
 		        	Log.v(TAG, "CountDownTimer (cdt) - onFinish() - Start Thread per il retrieving");
-					
-						//thr.start();
+
 					try {
 						thr.start();
 						thr.join(); //interrompe questo thread fino a quando quello chiamato non termina
+						thr=null;
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -116,12 +113,12 @@ public class ZozOtService extends Service {
 		    			Log.v(TAG, "CountDownTimer (cdtPower) - onFinish() ");        	 //$NON-NLS-1$
 		    					        	
 		    			MyHandler handler = new MyHandler();
-		    			//l'ultimo paramentro è false perchè deve fare il retrieving dei tipici per il controllo dei consumi
+		    			//l'ultimo paramentro ï¿½ false perchï¿½ deve fare il retrieving dei tipici per il controllo dei consumi
 		    			//QUI VIENE FATTO SOLO IL RETRIEVING DEI DATI CONSUMO
 		    			SoulissDevicesHelper thr = new SoulissDevicesHelper(handler,opzioni, aSoulissDevices, service, Constants.RETRIEVING, true, jsonBuilder);
 		    			Log.v(TAG, "CountDownTimer (cdtPower) - onFinish() - Start Thread per il retrieving");
 		    			thr.start();
-						
+		    			thr=null;
 		    			this.start();
 		    		}
 		    		
@@ -145,8 +142,8 @@ public class ZozOtService extends Service {
 		
 	}
 		//return super.onStartCommand(intent, flags, startId);
-		  return Service.START_NOT_STICKY;
-
+		  //return Service.START_NOT_STICKY;
+		  return Service.START_REDELIVER_INTENT;
 	}
 	
 	@Override
@@ -200,7 +197,7 @@ public class ZozOtService extends Service {
 	// Icona della notifica
 	notificationBuilder.setSmallIcon(R.drawable.oem_launcher);
 
-	// Creiamo il pending intent che verrà lanciato quando la notifica
+	// Creiamo il pending intent che verrï¿½ lanciato quando la notifica
 	// viene premuta
 	Intent notificationIntent = new Intent(this, ZozOtActivity.class);
 	PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);

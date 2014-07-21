@@ -31,7 +31,7 @@
     <string name="timeoutError"> ERRORE - TimeOut - PUSH split to packet of </string>
     <string name="PushDone"> Push Done. Total </string>
     <string name="about_desc">About</string>
-    <string name="about_desc_condensed">ZozOt - Open Energy Monitor ver 1.6 (May 2014) [tested with SoulissApp ver 1.2.9]</string>
+    <string name="about_desc_condensed">ZozOt - Open Energy Monitor ver 1.62 (Jul 2014) [tested with SoulissApp ver 1.2.9]</string>
   
   <!--  <string name="startOnBootCheckBox_desc">Start on Boot</string> 
   DA IMPLEMENTARE PROSSIMAMENTE -->

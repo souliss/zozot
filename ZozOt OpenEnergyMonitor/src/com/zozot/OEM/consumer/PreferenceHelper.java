@@ -4,21 +4,15 @@ import java.io.Serializable;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.content.res.Resources;
 
 public class PreferenceHelper implements Serializable {
-	
-	// Identificatore delle preferenze dell'applicazione
-    private final static String MY_PREFERENCES = "MyPref";
 	
 	private static final long serialVersionUID = 1L;
 	private Context contx;
 	private String myApiKey;
 	private String myFeedId;
-	private String myDatastreamName;
 	private String myUrl;
 	SharedPreferences.Editor editor;
 	private String myInterval="0";

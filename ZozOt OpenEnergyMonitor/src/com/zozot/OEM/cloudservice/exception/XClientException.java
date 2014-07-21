@@ -8,6 +8,11 @@ package com.zozot.OEM.cloudservice.exception;
  */
 public class XClientException extends RuntimeException
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3580530948076066393L;
+
 	public XClientException(String msg)
 	{
 		super(msg);

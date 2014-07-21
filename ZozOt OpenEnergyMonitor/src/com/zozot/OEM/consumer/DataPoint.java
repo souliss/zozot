@@ -21,14 +21,14 @@ public class DataPoint  implements Comparable<DataPoint> {
 		return data;
 	}
 	public void setData(String data) {
-		this.data = data.trim();
+		this.data = data;
 	}
 	
 	public String getValore() {
 		return valore;
 	}
 	public void setValore(String valore) {
-		this.valore = valore.trim();
+		this.valore = valore;
 	}
 
 
@@ -38,7 +38,7 @@ public class DataPoint  implements Comparable<DataPoint> {
 
 
 	public void setStream(String stream) {
-		this.stream = stream.trim();
+		this.stream = stream;
 	}
 
 
@@ -54,15 +54,4 @@ public class DataPoint  implements Comparable<DataPoint> {
 	}
 
 
-//	/* (non-Javadoc)
-//	 * @see java.lang.Object#equals(java.lang.Object)
-//	 */
-//	@Override
-//	public boolean equals(Object o) {
-//		DataPoint objDataPoint=(DataPoint) o;
-//		if(objDataPoint.data.equals(this.data) && objDataPoint.stream.equals(this.stream) && objDataPoint.valore.equals(this.valore)) 
-//			return true;
-//		else
-//			return super.equals(o);
-//	}
 }
