@@ -7,11 +7,7 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
+
 import java.util.concurrent.TimeoutException;
 
 import org.apache.http.HttpEntity;
@@ -31,15 +27,9 @@ import com.xively.android.consumer.R;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
-import android.text.format.Time;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.app.ListActivity;
-import android.os.Bundle;
-
 
 
 public class SoulissDevicesHelper extends Thread {
@@ -111,14 +101,14 @@ public class SoulissDevicesHelper extends Thread {
 			for (int i=0; i < aSoulissDevices.size();i++){
 				//esegue il push dei valori potenza in modo separato dagli altri valori
 				
-				//il push è eseguito solo se il bFlag è True, e bFlag è calcolato in base a bPushOnlyPowerValues. Se si tratta di un tipico per la misurazione dei consumi allora la temporizzazione è differente rispetto agli altri tipici
+				//il push ï¿½ eseguito solo se il bFlag ï¿½ True, e bFlag ï¿½ calcolato in base a bPushOnlyPowerValues. Se si tratta di un tipico per la misurazione dei consumi allora la temporizzazione ï¿½ differente rispetto agli altri tipici
 				if(bPushOnlyPowerValues){
 					Log.v(TAG,this.getName() + " RETRIEVING - OnlyPowerValues");
-					//esegue il push se il device è abilitato e se è un tipico per la misurazione dei consumi
+					//esegue il push se il device ï¿½ abilitato e se ï¿½ un tipico per la misurazione dei consumi
 					bFlag=aSoulissDevices.get(i).bEnabled && isAPowerTypical(aSoulissDevices.get(i).getTypical());
 					}else{
 						Log.v(TAG, this.getName() + " RETRIEVING - All Typicals but not OnlyPowerValues");
-						//esegue il push se il device è abilitato  e se NON è un tipico per la misurazione dei consumi
+						//esegue il push se il device ï¿½ abilitato  e se NON ï¿½ un tipico per la misurazione dei consumi
 						bFlag=aSoulissDevices.get(i).bEnabled && !isAPowerTypical(aSoulissDevices.get(i).getTypical());;
 					}
 				
@@ -139,7 +129,7 @@ public class SoulissDevicesHelper extends Thread {
 					// INVIO DATI XIVELY DI TUTTI I DISPOSITIVI SCELTI
 					//***********
 					String sVal;
-					//se la Salute del dispositivo è bassa allora il valore è inaffidabile e viene sostituito con null
+					//se la Salute del dispositivo ï¿½ bassa allora il valore ï¿½ inaffidabile e viene sostituito con null
 					if (iHealt>Constants.iSetupHealtLevelToSetNullValue){
 						sVal=String.valueOf(dValSens);
 					}else {
@@ -156,11 +146,11 @@ public class SoulissDevicesHelper extends Thread {
 			Log.d(TAG, this.getName() + " PUSH ");
 			int iRetry=0;
 			boolean bResponse=false;
-			//il numero di elementi da caricare è impostato sulla dimensione della lista
+			//il numero di elementi da caricare ï¿½ impostato sulla dimensione della lista
 
-			//eseguoil push solo se la lista non è vuota
+			//eseguo il push solo se la lista non ï¿½ vuota
 			if (!jsonBuilder.isEmpty()) {
-				//se il numero di elementi è maggiore di 1000 allora imposto il numero di elementi da caricare al massimo consentito
+				//se il numero di elementi ï¿½ maggiore di 1000 allora imposto il numero di elementi da caricare al massimo consentito
 				if(jsonBuilder.size()>Constants.PUSH_MAX_PACKET) {
 					iNumeroElementiPush=Constants.PUSH_MAX_PACKET;
 				} else iNumeroElementiPush=jsonBuilder.size();
@@ -170,7 +160,7 @@ public class SoulissDevicesHelper extends Thread {
 				if(iNumeroElementiPush>Constants.PUSH_MAX_PACKET) dividePush();
 				
 				try {
-					//reimposto bResponse a false. Lo faccio perchè in caso di primo ciclo positivo e secondo con eccezione devo averlo false e non true
+					//reimposto bResponse a false. Lo faccio perchï¿½ in caso di primo ciclo positivo e secondo con eccezione devo averlo false e non true
 					Log.d(TAG, this.getName() + " Tentativo " + iRetry + " - PUSH (going to putXively) ");
 					bResponse = putXively(jsonBuilder,iNumeroElementiPush);
 					Log.d(TAG, this.getName() + " PUSH RESULT: " + bResponse);
@@ -196,7 +186,6 @@ public class SoulissDevicesHelper extends Thread {
 				
 				if(bResponse){
 					Log.d(TAG, this.getClass().getName() + " PUSH Esito: " + bResponse + ". Inseriti " + iNumeroElementiPush + " elementi");
-			//		notifyMessage(formatter.format(date.getTime()) + " PUSH Esito: " + bResponse + ". Inseriti " + iNumeroElementiPush + " elementi");
 					//se esistono ancora elementi da inserire allora pongo bResponse =false in modo da non uscire dal ciclo
 					if(jsonBuilder.size()>Constants.PUSH_MIN_PACKET) {
 						bResponse=false;
@@ -206,7 +195,7 @@ public class SoulissDevicesHelper extends Thread {
 						}
 					}
 							
-				} else iRetry++; //se c'è stato errore allora incremento il numero di tentativi eseguiti
+				} else iRetry++; //se c'ï¿½ stato errore allora incremento il numero di tentativi eseguiti
 				
 			} while (!bResponse && iRetry<=Constants.PUSH_RETRY_NUMBERS && jsonBuilder.size()>0);
 //			notifyMessage(formatter.format(date.getTime()) + " Esce da ciclo while con jsonBuilder.size() = " + jsonBuilder.size() + ", iRetry="+ iRetry + ", Esito="+bResponse);
@@ -264,6 +253,7 @@ public class SoulissDevicesHelper extends Thread {
 				} catch (IOException e) {
 				}
 			}
+			reader=null;
 			return sb.toString();
 		}
 	  
@@ -280,9 +270,6 @@ public class SoulissDevicesHelper extends Thread {
 			
 			if(!jsonBuilder.getDataPoints().isEmpty()){
 			
-		//	JSONBodyBuilder Jbuilder= new JSONBodyBuilder(xsortedSetDataPoints);
-		
-			//String sBody=jsonBuilder.getBody(iNumeroElementiDaCaricare);
 			JSONResponseHelper r=jsonBuilder.getBody(iNumeroElementiDaCaricare);
 			Response response =null;
 			if(!(r.getBody()==null) && !r.getBody().isEmpty()){
@@ -292,34 +279,30 @@ public class SoulissDevicesHelper extends Thread {
 				if (response != null)
 				{
 					if(response.getStatusCode()==200){
-						//se il push è andato a buon fine allora elimino gli elementi presenti nella lista temporanea
+						//se il push ï¿½ andato a buon fine allora elimino gli elementi presenti nella lista temporanea
 						//INVIO NOTIFICA ALL'ACTIVITY PRINCIPALE
 						notifyMessage(formatter.format(date.getTime()) + " inseriti " + r.getElementiCaricati() + " datapoints");
-						//QUI VERIFICARE SE FARE IL CLEAR DEGLI ELEMENTI CARICATI OPPURE DI iNumeroElementiDaCaricare 
 						jsonBuilder.clear(iNumeroElementiDaCaricare);
 						Log.d(TAG, this.getClass().getName() + " Push OK, delete list: " + r.getElementiCaricati() );
-						//se l'array è vuoto allora la volta successiva posso caricare tutti gli elementi senza i limiti dovuti al timeout. Quindi riporto iNumeroElementiDaCaricare a Null
+						//se l'array ï¿½ vuoto allora la volta successiva posso caricare tutti gli elementi senza i limiti dovuti al timeout. Quindi riporto iNumeroElementiDaCaricare a Null
 						if(jsonBuilder.size()==0) {
 							Log.d(TAG, this.getClass().getName() + " List empty");
 						}
 						return true;
 					} else {
 						//notifyMessage(formatter.format(date.getTime()) + " ERRORE:  " + response.getMessage() + " - Push " + jsonBuilder.size() + " datapoints");
-						Log.d(TAG, this.getClass().getName() + " ERRORE: StatusCode="+response.getStatusCode() +" Desc: " + response.getContent() +" - Push " + r.getElementiCaricati()  + " datapoints");
+						Log.d(TAG, this.getClass().getName() + " ERROR: StatusCode="+response.getStatusCode() +" Desc: " + response.getContent() +" - Push " + r.getElementiCaricati()  + " datapoints");
 						//altrimenti inserisco nuovamente gli elementi nella lista e cancello la lista temporanea
-				//		notifyMessage(formatter.format(date.getTime()) + " ERRORE: StatusCode="+response.getStatusCode() +" Desc: " + response.getContent() +" - Push " + iNumeroElementiDaCaricare + " datapoints");
-						//if (response.getContent().contains("TimeoutException") || response.getContent().contains("RequestUnsuccessfulException")) {
 							if (response.getContent().contains("TimeoutException")) {
 							//sollevo eccezione TIMEOUTEXCEPTION
 							throw new TimeoutException();
 						}
-						
 					}
 				} //if (response != null)
 				return false;
 			}
 	
-		return true; //se arrivo qui vuol dire che l'array è vuoto. Ritorno true per uscire subito dal ciclo tentativi invio.
+		return true; //se arrivo qui vuol dire che l'array ï¿½ vuoto. Ritorno true per uscire subito dal ciclo tentativi invio.
 		}
 
 		

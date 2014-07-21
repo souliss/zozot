@@ -8,7 +8,6 @@ import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
 
-import android.os.Bundle;
 import android.util.Log;
 
 import com.xively.android.consumer.Constants;
@@ -36,7 +35,7 @@ public class JSONBodyBuilder {
 			throws InterruptedException {
 		// TODO CREAZIONE BODY
 
-				// se il numero di elementi da caricare è maggiore della
+				// se il numero di elementi da caricare ï¿½ maggiore della
 				// dimensione dell'array allora pongo l'indice massimo alla dimensione dell'array
 				if (iNumeroElementiDaCaricare > arrayListDataPoints.size())
 					iNumeroElementiDaCaricare = arrayListDataPoints.size();
@@ -78,7 +77,7 @@ public class JSONBodyBuilder {
 						if (sStream_elementoTMP != null
 								&& (elemento.getStream()
 										.equals(sStream_elementoTMP))) {
-							// se è uguale allo stream precedente inserisco solo
+							// se ï¿½ uguale allo stream precedente inserisco solo
 							// "at"....
 							sBody += ", {\"at\":\"" + elemento.getData()
 									+ "\",\"value\":\"" + elemento.getValore()
@@ -91,7 +90,7 @@ public class JSONBodyBuilder {
 
 						} else {
 							if (sStream_elementoTMP == null) {
-								// se sStream_elementoTMP è NULL vuol dire che
+								// se sStream_elementoTMP ï¿½ NULL vuol dire che
 								// siamo
 								// al primo elemento
 								sBody += "{\"id\": \"";
@@ -101,13 +100,13 @@ public class JSONBodyBuilder {
 								// prima
 								// di proseguire
 								sBody += "]}, {\"id\": \""; // se lo stream non
-															// è il
+															// ï¿½ il
 															// primo (solo per
 															// il
 															// primo
 															// sStream_elementoTMP
-															// è
-															// null), ed è
+															// ï¿½
+															// null), ed ï¿½
 															// diverso
 															// dal precedente
 															// allora
@@ -183,19 +182,19 @@ public class JSONBodyBuilder {
 			return true;
 	}
 
-	public synchronized void clear() {
-					sortedSetDataPoints.clear();
-	}
+//	public synchronized void clear() {
+//					sortedSetDataPoints.clear();
+//	}
 
-	// la cancellazione così non funziona, e se funziona è troppo lenta
+	
 	public synchronized void clear(Integer iNumeroElementiDaCaricare) {
-		// cancella dalla lista gli elementi già caricati
+		// cancella dalla lista gli elementi giï¿½ caricati
 		// estraggo una sublist, cancello la lista
-		//se il numero di elementi caricati è uguale a quelli rimasti in lista (e da cancellare) allora semplicemente cancelo tutta la lista
+		//se il numero di elementi caricati ï¿½ uguale a quelli rimasti in lista (e da cancellare) allora semplicemente cancelo tutta la lista
 		if(iNumeroElementiDaCaricare>=arrayListDataPoints.size()){
 			arrayListDataPoints.clear();
 		} else {
-			//...altrimenti salvo prima la porzione rimanente di lista, cancello tutto e poi inserisco la parte salvata (faccio così perchè in altri modi ottengo errori
+			//...altrimenti salvo prima la porzione rimanente di lista, cancello tutto e poi inserisco la parte salvata (faccio cosï¿½ perchï¿½ in altri modi ottengo errori
 					ArrayList<DataPoint> arrayListDataPointsTMP = new ArrayList<DataPoint>();
 					arrayListDataPointsTMP.addAll(arrayListDataPoints.subList(iNumeroElementiDaCaricare,arrayListDataPoints.size()-1));
 					arrayListDataPoints.clear();

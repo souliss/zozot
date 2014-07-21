@@ -38,5 +38,5 @@
     <string name="timeoutError"> ERRORE - TimeOut - PUSH split to packet of </string>
     <string name="PushDone"> Push Done. Total </string>
     <string name="about_desc">About</string>
-    <string name="about_desc_condensed">ZozOt - Xively ver 1.6 (May 2014) [tested with SoulissApp ver 1.2.9]</string>
+    <string name="about_desc_condensed">ZozOt - Xively ver 1.62 (May 2014) [tested with SoulissApp ver 1.2.9]</string>
 </resources>

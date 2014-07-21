@@ -145,7 +145,8 @@ public class ZozOtService extends Service {
 		
 	}
 		//return super.onStartCommand(intent, flags, startId);
-		  return Service.START_NOT_STICKY;
+		  //return Service.START_NOT_STICKY;
+		  return Service.START_REDELIVER_INTENT;
 
 	}
 	

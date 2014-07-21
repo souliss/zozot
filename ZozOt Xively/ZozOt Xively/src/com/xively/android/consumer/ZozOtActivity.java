@@ -157,7 +157,7 @@ public class ZozOtActivity extends Activity {
 				
 			} else if (id == R.id.getNodesAndStream) {
 				
-				//avvia un thread per riempire gli array con i feeds di Xively ed i devides di Souliss solo quando il servizio di connessione di xively è partito
+				//avvia un thread per riempire gli array con i feeds di Xively ed i devides di Souliss solo quando il servizio di connessione di xively ï¿½ partito
 	if(opzioni.isConfigured){
 				final Handler handler = new Handler();
 				new Thread(new Runnable() {
@@ -169,7 +169,6 @@ public class ZozOtActivity extends Activity {
 						//thread sempre in esecuzione. Controlla che i due array aXivelyFeeds e aSoulissDevices siano sempre pieni.
 						boolean isOK=false;	
 						while (!isOK && iNrFails>0){
-				//		if (service!=null && (aXivelyFeeds==null || aSoulissDevices==null || aXivelyFeeds.size()==0 || aSoulissDevices.size()==0)) {
 							if (xivelyService==null){
 								//pongo la variabile a zero per uscire dal ciclo while
 								iNrFails=0;
@@ -198,8 +197,8 @@ public class ZozOtActivity extends Activity {
 							jArraySlots = ((JSONArray)((JSONObject) jArray.get(i)).get("slot"));
 							//scorre gli "slot" disponibili
 							 for (int j = 0; j < jArraySlots.length(); j++) {
-								 //i è il nodo
-								 //j è lo slot
+								 //i ï¿½ il nodo
+								 //j ï¿½ lo slot
 								 String sNomeNodo=SoulissDevicesHelper.getSensorItemName(jArray, i, j);
 								 int iTypical=SoulissDevicesHelper.getTypical(jArray, i, j);
 								 aSoulissDevices.add(new Device(i,j, iTypical, sNomeNodo));
@@ -291,29 +290,6 @@ public class ZozOtActivity extends Activity {
 		}
 	
 
-	/**
-	 * Binds this activity to the service.
-	 */
-//	public void initService() {
-//		
-//		connection = new HttpServiceConnection();
-//		
-//		Intent i = new Intent("com.xively.android.service.HttpService");
-//		
-//		boolean ret = bindService(i, connection, Context.BIND_AUTO_CREATE);
-//		
-//		Log.d(TAG, "initService() bound with " + ret);
-//	}
-
-//	/**
-//	 * Unbinds this activity from the service.
-//	 */
-//	private void releaseService() {
-//		unbindService(connection);
-//		connection = null;
-//		Log.d(TAG, "releaseService() unbound.");
-//	}
-
 	public static Context getAppContext() {
 		return ZozOtActivity.context;
 	}
@@ -324,7 +300,7 @@ public class ZozOtActivity extends Activity {
 
 	    int[] powerTypicalsArray = getResources().getIntArray(R.array.powerTypicals);    
 
-opzioni.setPowerTypicalsArray(powerTypicalsArray);
+	    opzioni.setPowerTypicalsArray(powerTypicalsArray);
 
 		this.opzioni = opzioni;
 	}
@@ -358,44 +334,7 @@ opzioni.setPowerTypicalsArray(powerTypicalsArray);
 	  	
 	    }
 	    }
-		
-
-	// metodo che si occupa di gestire i messaggi provenienti dal thread
-	//result: invia il risultato del push 
-//	 public class MyHandler extends Handler {
-//		 TextView resultField;   
-//		 public MyHandler() {
-//			 super();
-//			 resultField = (TextView) findViewById(R.id.result);
-//			 resultField.setMaxLines(50);
-//			
-//			// TODO Auto-generated constructor stub
-//		}
-//
-//			@Override
-//		    public void handleMessage(Message msg) {
-//		      Bundle bundle = msg.getData();
-//		      if(bundle.containsKey("result")) {
-//		        String value = bundle.getString("result");
-//		        
-//		        //resultField.setText(value);
-//		        resultField.append("\n"+value);
-//		        
-////		        final Layout layout = resultField.getLayout();
-////		        if(layout != null){
-////		            int scrollDelta = layout.getLineBottom(resultField.getLineCount() -1) - resultField.getScrollY() - resultField.getHeight();
-////	            if(scrollDelta > 0)
-////		            if (resultField.getGravity() != Gravity.BOTTOM){
-////		            	resultField.setGravity(Gravity.BOTTOM);	
-////		            }
-////	            	resultField.scrollBy(0, scrollDelta);
-////		        
-////		        }
-//	    }
-//		    }
-//		  }
-	
-	
+			
 	private void TimerStop(){
 		stopService(new Intent(ZozOtActivity.this,ZozOtService.class));
 		Toast.makeText(ZozOtActivity.this, "Push STOP", Toast.LENGTH_SHORT).show();
@@ -412,9 +351,8 @@ opzioni.setPowerTypicalsArray(powerTypicalsArray);
 		myIntents2 = new Intent(getApplicationContext(), ZozOtService.class);
 		String pkg=getPackageName();
 		myIntents2.putParcelableArrayListExtra(pkg+"SoulissDevices", aSoulissDevices);
-	//	myIntents2.putExtra(pkg+"Parameters_Xively", opzioni);
 
-		//se il servizio è già avviato allora lo fermo, poi lo riavvio
+		//se il servizio ï¿½ giï¿½ avviato allora lo fermo, poi lo riavvio
 		if(opzioni.getMyServiceState()){
 					
 			try {
@@ -431,42 +369,6 @@ opzioni.setPowerTypicalsArray(powerTypicalsArray);
 		
 			return myIntents2;
 
-		//avvia o ferma il counter
-				
-		//se il timer è già nello stato Avvio
-//			if 	(opzioni.getMyServiceState()){
-//			//allora lo fermo
-//				if(cdt!=null) TimerStop(cdt);
-//			}
-//			//avvio il timer (solo se la temporizzazione è impostata ad un valore qualsiasi >0)
-//			if (opzioni.getMyInterval()>0) {
-//				cdt = new CountDownTimer(opzioni.getMyInterval(),1000){
-//			        @Override
-//			        public void onFinish() {
-//			        	Log.d(TAG, "CountDownTimer - onFinish() ");        	
-//			        //Cosa fare quando finisce
-//			        	// *****************
-//						// *****************
-//						// RICHIESTA DATI ZOZZARIELLO E INVIO A XIVELY
-//			        	MyHandler handler = new MyHandler();
-//						SoulissDevicesHelper thr = new SoulissDevicesHelper(handler,opzioni, aSoulissDevices, service, Constants.PUSH_TO_XIVELY);
-//						thr.start();
-//						this.start();
-//			        }
-//			        
-//
-//			        @Override
-//			        public void onTick(long millisUntilFinished) {
-//			        //cosa fare ad ogni passaggio
-//			        	TextView prossimoPushField = (TextView) findViewById(R.id.textViewProssimoPush);
-//			        	long sec = millisUntilFinished/1000;  
-//			        	prossimoPushField.setText(sec +" seconds remain");
-//			        }
-//			        }.start();
-//				 Toast.makeText(ZozOtActivity.this, "Push START", Toast.LENGTH_SHORT).show();
-//			}
-//			return cdt;
-////			return null;
 	}
 	
 /**
@@ -483,7 +385,7 @@ opzioni.setPowerTypicalsArray(powerTypicalsArray);
 	}
 
 	//riceve i messaggi inviati in broadcast dal service
-//in alto, nel metodo onCreate, il receiver è registrato ed è aplicato il filtro: registerReceiver(uiUpdated, new IntentFilter(Constants.PUSH_RESULT_UPDATE_INTENT_ACTION_NAME));
+//in alto, nel metodo onCreate, il receiver ï¿½ registrato ed ï¿½ aplicato il filtro: registerReceiver(uiUpdated, new IntentFilter(Constants.PUSH_RESULT_UPDATE_INTENT_ACTION_NAME));
 	
 	private BroadcastReceiver uiUpdated= new BroadcastReceiver() {
 		
@@ -498,7 +400,7 @@ opzioni.setPowerTypicalsArray(powerTypicalsArray);
 	    	if (sValue!=null){
 	    		    	
 			resultField.append("\n"+sValue);
-			//il codice sotto è stato spostato nella classe ZozOtService, nel punto in cui vengono trasmessi i dati in broadcast. Questo è per registrare i messaggi anche quanto l'acgtivity principale non è in esecuzione
+			//il codice sotto ï¿½ stato spostato nella classe ZozOtService, nel punto in cui vengono trasmessi i dati in broadcast. Questo ï¿½ per registrare i messaggi anche quanto l'acgtivity principale non ï¿½ in esecuzione
 //			//salvo il valore per l'eventuale ripristino in caso di rotazione dello schermo
 //			MyApplication.getInstance().setTextBoxLog(resultField.getText().toString());
 	    	}
@@ -513,7 +415,7 @@ opzioni.setPowerTypicalsArray(powerTypicalsArray);
 	};
 	HttpServiceConnection connection;
 	//riceve i messaggi inviati in broadcast dal service
-	//in alto, nel metodo onCreate, il receiver è registrato ed è aplicato il filtro: registerReceiver(uiUpdated, new IntentFilter(Constants.PUSH_RESULT_UPDATE_INTENT_ACTION_NAME));
+	//in alto, nel metodo onCreate, il receiver ï¿½ registrato ed ï¿½ aplicato il filtro: registerReceiver(uiUpdated, new IntentFilter(Constants.PUSH_RESULT_UPDATE_INTENT_ACTION_NAME));
 		
 		private BroadcastReceiver uiUpdatedPowerTypicals= new BroadcastReceiver() {
 			
@@ -572,7 +474,6 @@ opzioni.setPowerTypicalsArray(powerTypicalsArray);
 				for (int j = 0; j < jArraySlots.length(); j++) {
 					sNomeStream=jArraySlots.getJSONObject(j).getString("id");
 					aFeeds.add(sNomeStream);
-					
 					dbHelper.insertStream(dbHelper.getWritableDatabase(), sNomeStream);
 				}
 			}

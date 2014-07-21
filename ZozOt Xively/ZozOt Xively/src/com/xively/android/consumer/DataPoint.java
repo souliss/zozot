@@ -54,15 +54,4 @@ public class DataPoint  implements Comparable<DataPoint> {
 	}
 
 
-//	/* (non-Javadoc)
-//	 * @see java.lang.Object#equals(java.lang.Object)
-//	 */
-//	@Override
-//	public boolean equals(Object o) {
-//		DataPoint objDataPoint=(DataPoint) o;
-//		if(objDataPoint.data.equals(this.data) && objDataPoint.stream.equals(this.stream) && objDataPoint.valore.equals(this.valore)) 
-//			return true;
-//		else
-//			return super.equals(o);
-//	}
 }
