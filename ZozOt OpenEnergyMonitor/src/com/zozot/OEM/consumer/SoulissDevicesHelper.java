@@ -201,7 +201,7 @@ public class SoulissDevicesHelper extends Thread {
 			
 			if(!bResponse){
 				Log.d(TAG, this.getClass().getName() + " ERRORE - Push " + jsonBuilder.size() + opzioni.getStringXML(R.string.postponed));
-				notifyMessage(formatter.format(date.getTime()) + " ERRORE - Push " + jsonBuilder.size() + opzioni.getStringXML(R.string.postponed));
+				notifyMessage(formatter.format(date.getTime()) + " ERRORE - Push " + jsonBuilder.size() + " " + opzioni.getStringXML(R.string.postponed));
 			}
 			break;
 			}
@@ -219,7 +219,7 @@ public class SoulissDevicesHelper extends Thread {
 			iNumeroElementiPush/=iDivisionePer;
 		}
 				Log.e("Split", String.valueOf(R.string.timeoutError + iNumeroElementiPush + R.string.elements));
-				notifyMessage(formatter.format(date.getTime()) + R.string.timeoutError + iNumeroElementiPush + R.string.elements);
+				notifyMessage(formatter.format(date.getTime()) + " " + opzioni.getStringXML(R.string.timeoutError) + iNumeroElementiPush + " " + opzioni.getStringXML(R.string.elements));
 	}
 	 
 	public static String getUrlResponse(String url) {
@@ -310,7 +310,11 @@ public class SoulissDevicesHelper extends Thread {
 		}
 
 		public static String getSensorItemName(JSONArray jArray, int iNodo, int iDispositivo) throws JSONException {
-			return ((JSONObject) ((JSONArray)((JSONObject) jArray.get(iNodo)).get("slot")).get(iDispositivo)).getString("ddesc");
+			try {
+				return ((JSONObject) ((JSONArray)((JSONObject) jArray.get(iNodo)).get("slot")).get(iDispositivo)).getString("ddesc");
+			}catch (Exception e)  {
+				return "";
+			}
 		}
 		
 		public static int getHealtValue(JSONArray jArray, int iNodo) throws JSONException {

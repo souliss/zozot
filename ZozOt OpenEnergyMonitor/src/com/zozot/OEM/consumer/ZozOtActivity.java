@@ -190,6 +190,7 @@ public class ZozOtActivity extends Activity {
 					 String s = null;
 					 if (sURL!=null && !sURL.isEmpty()){
 						 s = SoulissDevicesHelper.getUrlResponse(sURL);
+							
 					 }
 					// parse JSON data
 					try {
@@ -454,7 +455,7 @@ public class ZozOtActivity extends Activity {
 
 	/**
 		 * getXivelyFeeds()
-		 * Restituisce un ArrayList<String> che contiene gli stream di xively disponibili
+		 * Restituisce un ArrayList<String> che contiene gli stream  disponibili
 		 * @param dbHelper 
 		 * @return ArrayList<String>
 		 */

@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-
 import java.util.concurrent.TimeoutException;
 
 import org.apache.http.HttpEntity;
@@ -202,7 +201,7 @@ public class SoulissDevicesHelper extends Thread {
 			}//END if (!jsonBuilder.isEmpty())	
 			
 			if(!bResponse){
-				Log.d(TAG, this.getClass().getName() + " ERRORE - Push " + jsonBuilder.size() + opzioni.getStringXML(R.string.postponed));
+				Log.d(TAG, this.getClass().getName() + " ERRORE - Push " + jsonBuilder.size() +" " + opzioni.getStringXML(R.string.postponed));
 				notifyMessage(formatter.format(date.getTime()) + " ERRORE - Push " + jsonBuilder.size() + opzioni.getStringXML(R.string.postponed));
 			}
 			break;
@@ -221,7 +220,7 @@ public class SoulissDevicesHelper extends Thread {
 			iNumeroElementiPush/=iDivisionePer;
 		}
 				Log.e("Split", String.valueOf(R.string.timeoutError + iNumeroElementiPush + R.string.elements));
-				notifyMessage(formatter.format(date.getTime()) + R.string.timeoutError + iNumeroElementiPush + R.string.elements);
+				notifyMessage(formatter.format(date.getTime()) + " " + opzioni.getStringXML(R.string.timeoutError) + iNumeroElementiPush + " " +opzioni.getStringXML(R.string.elements));
 	}
 	 
 	public static String getUrlResponse(String url) {
@@ -281,7 +280,7 @@ public class SoulissDevicesHelper extends Thread {
 					if(response.getStatusCode()==200){
 						//se il push � andato a buon fine allora elimino gli elementi presenti nella lista temporanea
 						//INVIO NOTIFICA ALL'ACTIVITY PRINCIPALE
-						notifyMessage(formatter.format(date.getTime()) + " inseriti " + r.getElementiCaricati() + " datapoints");
+						notifyMessage(formatter.format(date.getTime()) + " " +opzioni.getStringXML(R.string.PushDone) +" " + r.getElementiCaricati() + " " + opzioni.getStringXML(R.string.elements));
 						jsonBuilder.clear(iNumeroElementiDaCaricare);
 						Log.d(TAG, this.getClass().getName() + " Push OK, delete list: " + r.getElementiCaricati() );
 						//se l'array � vuoto allora la volta successiva posso caricare tutti gli elementi senza i limiti dovuti al timeout. Quindi riporto iNumeroElementiDaCaricare a Null
@@ -311,7 +310,11 @@ public class SoulissDevicesHelper extends Thread {
 		}
 
 		public static String getSensorItemName(JSONArray jArray, int iNodo, int iDispositivo) throws JSONException {
-			return ((JSONObject) ((JSONArray)((JSONObject) jArray.get(iNodo)).get("slot")).get(iDispositivo)).getString("ddesc");
+			try {
+				return ((JSONObject) ((JSONArray)((JSONObject) jArray.get(iNodo)).get("slot")).get(iDispositivo)).getString("ddesc");
+			}catch (Exception e)  {
+				return "";
+			}
 		}
 		
 		public static int getHealtValue(JSONArray jArray, int iNodo) throws JSONException {

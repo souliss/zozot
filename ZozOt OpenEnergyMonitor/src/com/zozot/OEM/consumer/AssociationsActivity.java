@@ -35,7 +35,7 @@ import android.widget.ToggleButton;
 public class AssociationsActivity extends Activity {
 	PreferenceHelper opzioni;
 	ArrayList<Device> aSoulissDevices;
-	ArrayList<String> aXivelyFeeds;
+	ArrayList<String> aOEMFeeds;
 	ArrayList<ToggleButton> aButtons =new ArrayList<ToggleButton> ();
 	ArrayList<Spinner> aSpinners =new ArrayList<Spinner> (); 
 	static String TAG=Constants.TAG_LivelloAvvisiApplicazione;    
@@ -60,7 +60,7 @@ public class AssociationsActivity extends Activity {
 		Intent intent0= this.getIntent();
 		String pkg=getPackageName();
 		aSoulissDevices=intent0.getParcelableArrayListExtra(pkg+"SoulissDevices");
-		aXivelyFeeds=intent0.getStringArrayListExtra(pkg+"XivelyFeeds");
+		aOEMFeeds=intent0.getStringArrayListExtra(pkg+"XivelyFeeds");
 		
 		
 	    opzioni = ZozOtActivity.getOpzioni();
@@ -93,15 +93,15 @@ public class AssociationsActivity extends Activity {
 	    	//spinner1.setBackgroundResource(color.background_light);
 	    	
 	    	
-	        String[] listaStreamPerSpinner=new String[aXivelyFeeds.size()+1];
+	        String[] listaStreamPerSpinner=new String[aOEMFeeds.size()+1];
 	        //la prima voce � la voce nulla
 	        listaStreamPerSpinner[0]=Constants.NULL_XIVELY_STREAM_NAME;
 	        //carica i nomi degli stream disponibili nello spinner
 	        int iSelectedPosition=0;
-	        for (int j=0;j<aXivelyFeeds.size();j++ ){
-	        	listaStreamPerSpinner[j+1]=aXivelyFeeds.get(j);
+	        for (int j=0;j<aOEMFeeds.size();j++ ){
+	        	listaStreamPerSpinner[j+1]=aOEMFeeds.get(j);
 
-	        	if (aSoulissDevices.get(i).getStreamName()!=null &&aSoulissDevices.get(i).getStreamName().equals(aXivelyFeeds.get(j))){
+	        	if (aSoulissDevices.get(i).getStreamName()!=null &&aSoulissDevices.get(i).getStreamName().equals(aOEMFeeds.get(j))){
 	        		iSelectedPosition=j+1;
 	        	}
 	        }
