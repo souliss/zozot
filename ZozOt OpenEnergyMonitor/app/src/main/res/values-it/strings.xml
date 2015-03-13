@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <string name="app_name">ZozOt - Open Energy Monitor</string>
+    <string name="service_name">ZozOtService</string>
+    <string name="APIKey">APIKey</string>
+    <string name="scheduleInterval">scheduleInterval</string>
+    <string name="scheduleIntervalPowerRetrieving">scheduleIntervalPowerRetrieving</string>
+    <string name="getNodesAndStream_key">GetNodesAndStream_key</string>
+    
+       <!-- TRANSLATE -->
+    <string name="btnConferma_text">Conferma</string>
+
+    <string name="APIKey_title">API Key</string>
+    <string name="APIKey_desc">Inserire la chiave privata</string>
+    <string name="UrlZozzariello">UrlZozzariello</string>
+    <string name="UrlZozzariello_title">Indirizzo</string>    
+    <string name="UrlZozzariello_desc">URL di Zozzariello, locale o remoto </string>    
+    <string name="streams_desc">Associazioni</string>
+    <string name="toggleONText">ON</string>
+    <string name="toggleOFFText">OFF</string>
+    <string name="options_desc">Preferenze</string>
+    <string name="scheduleInterval_title">Intervallo Invio Dati</string>
+    <string name="scheduleInterval_title_desc">Intervallo per l\'invio di tutti i dati memorizzati</string>
+    <string name="scheduleIntervalPowerRetrieving_title">Intervallo Rilevamento Consumi</string>
+    <string name="scheduleIntervalPowerRetrieving_title_desc">Intervallo per la memorizzazione dei soli valori consumo</string>
+    <string name="getNodesAndStream_desc">Leggi dispositivi e canali</string>
+    
+    <string name="executing_Service">Servizio in esecuzione</string>
+    <string name="notifica_desc">Servizio in esecuzione</string>
+    <string name="postponed"> datapoints rinviato</string>
+    <string name="elements"> elementi</string>
+    <string name="timeoutError"> ERRORE - TimeOut - PUSH verrà eseguito a pacchetti di </string>
+    <string name="PushDone">Caricamento  eseguito. Totale </string>
+    <string name="about_desc">About</string>
+    <string name="about_desc_condensed">ZozOt - Open Energy Monitor ver 1.65 (Mar 2015) [tested with SoulissApp ver 1.5.1]</string>
+    
+    <!-- <string name="startOnBootCheckBox_desc">Avvio automatico</string>
+     DA IMPLEMENTARE PROSSIMAMENTE -->
+</resources>

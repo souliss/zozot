@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <string name="app_name">ZozOt - Open Energy Monitor</string>
+    <string name="service_name">ZozOtService</string>
+    <string name="scheduleInterval">scheduleInterval</string>
+    <string name="APIKey">APIKey</string>
+    <string name="scheduleIntervalPowerRetrieving">scheduleIntervalPowerRetrieving</string>
+    <string name="getNodesAndStream_key">GetNodesAndStream_key</string>
+        
+    <!-- TRANSLATE -->
+       
+    <string name="btnConferma_text">Done</string>
+    <string name="APIKey_title">API Key</string>
+    <string name="APIKey_desc">Insert Private Key</string>
+    <string name="UrlZozzariello">UrlZozzariello</string>
+    <string name="UrlZozzariello_title">Address</string>    
+    <string name="UrlZozzariello_desc">Zozzariello Address</string>    
+    <string name="streams_desc">Join Devices to Streams</string>
+    <string name="toggleONText">ON</string>
+    <string name="toggleOFFText">OFF</string>
+    <string name="options_desc">Settings</string>
+    <string name="scheduleInterval_title">Timing Data Push</string>
+    <string name="scheduleInterval_title_desc">Interval for push of all devices value stored</string>
+    <string name="scheduleIntervalPowerRetrieving_title">Timing Power Retieving</string>
+    <string name="scheduleIntervalPowerRetrieving_title_desc">Interval for store only power values</string>
+    <string name="getNodesAndStream_desc">Get nodes and stream</string>
+    <string name="executing_Service">Service Run</string>
+    <string name="notifica_desc">Service Run</string>
+    <string name="postponed"> datapoints postponed</string>
+    <string name="elements"> elements</string>
+    <string name="timeoutError"> ERRORE - TimeOut - PUSH split to packet of </string>
+    <string name="PushDone"> Push Done. Total </string>
+    <string name="about_desc">About</string>
+    <string name="about_desc_condensed">ZozOt - Open Energy Monitor ver 1.63 (Jul 2014) [tested with SoulissApp ver 1.2.9]</string>
+  
+  <!--  <string name="startOnBootCheckBox_desc">Start on Boot</string> 
+  DA IMPLEMENTARE PROSSIMAMENTE -->
+    
+</resources>
